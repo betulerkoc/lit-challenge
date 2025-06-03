@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './src/employee-list';
+import './src/employee-records';
 
 @customElement('management-app')
 export class App extends LitElement {
@@ -23,7 +23,7 @@ export class App extends LitElement {
     render() {
         return html`
             <div class="container">
-                <employee-list></employee-list>
+                <employee-records></employee-records>
             </div>
         `;
     }
