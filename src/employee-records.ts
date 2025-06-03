@@ -15,7 +15,6 @@ interface Employee {
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
-  @property({ type: Array })
   employees: Employee[] = [
     {
       id: 1,
@@ -63,12 +62,9 @@ export class EmployeeRecords extends LitElement {
     }
   ];
 
-  @state()
-  private viewMode: 'table' | 'list' = 'table';
-
-  @state()
-  private currentPage: number = 1;
-  private pageSize: number = 10;
+  viewMode: 'table' | 'list' = 'table';
+  currentPage: number = 1;
+  pageSize: number = 10;
 
   static styles = css`
     :host {
