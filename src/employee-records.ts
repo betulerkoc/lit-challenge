@@ -62,6 +62,7 @@ export class EmployeeRecords extends LitElement {
     }
   ];
 
+  @state()
   viewMode: 'table' | 'list' = 'table';
   currentPage: number = 1;
   pageSize: number = 10;
@@ -233,17 +234,17 @@ export class EmployeeRecords extends LitElement {
     return Math.ceil(this.employees.length / this.pageSize);
   }
 
-  private goToPage(page: number) {
+  setViewMode(mode: 'table' | 'list') {
+    this.viewMode = mode;
+  }
+
+  goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
   }
 
-  private setViewMode(mode: 'table' | 'list') {
-    this.viewMode = mode;
-  }
-
-  render() {
+  override render() {
     return html`
       <div class="records-container">
         <div class="header">
@@ -270,7 +271,7 @@ export class EmployeeRecords extends LitElement {
     `;
   }
 
-  private renderTableView() {
+  renderTableView() {
     return html`
       <table class="employee-list">
         <thead>
@@ -306,7 +307,7 @@ export class EmployeeRecords extends LitElement {
     `;
   }
 
-  private renderListView() {
+  renderListView() {
     return html`
       <div class="card-list">
         ${this.paginatedEmployees.map(employee => html`
