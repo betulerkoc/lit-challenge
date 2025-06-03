@@ -34,7 +34,29 @@ export class EmployeeRecords extends LitElement {
       lastName: 'Erk',
       position: 'Medior',
       department: 'Analytics',
-      email: 'jane@example.com',
+      email: 'betty@example.com',
+      phoneNumber: '0987654321',
+      dateOfEmployment: '2020-02-01',
+      dateOfBirth: '1991-01-01',
+    },
+    {
+      id: 3,
+      firstName: 'Betty',
+      lastName: 'Erk',
+      position: 'Medior',
+      department: 'Analytics',
+      email: 'betty@example.com',
+      phoneNumber: '0987654321',
+      dateOfEmployment: '2020-02-01',
+      dateOfBirth: '1991-01-01',
+    },
+    {
+      id: 4,
+      firstName: 'Betty',
+      lastName: 'Erk',
+      position: 'Medior',
+      department: 'Analytics',
+      email: 'betty@example.com',
       phoneNumber: '0987654321',
       dateOfEmployment: '2020-02-01',
       dateOfBirth: '1991-01-01',
@@ -143,20 +165,22 @@ export class EmployeeRecords extends LitElement {
       color: #d35400;
     }
     .card-list {
-      display: flex;
-      flex-direction: row;
-      gap: 18px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
       margin-top: 12px;
     }
     .employee-card {
       display: flex;
-      align-items: center;
-      background: #fafafa;
-      border-radius: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-      padding: 18px 20px;
-      gap: 24px;
-      width: 25%;
+      align-items: flex-start;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
+      padding: 28px 32px;
+      gap: 32px;
+      border: 1px solid #f0f0f0;
+      transition: box-shadow 0.2s, transform 0.2s;
+      position: relative;
     }
     .card-checkbox {
       margin-right: 12px;
