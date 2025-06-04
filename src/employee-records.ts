@@ -65,14 +65,16 @@ export class EmployeeRecords extends LitElement {
 
   @state()
   viewMode: 'table' | 'list' = 'table';
-  
+
   @state()
   private showForm = false;
+  @state()
+  private editingEmployee: Employee | null = null;
 
   currentPage: number = 1;
   pageSize: number = 10;
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: 32px 0;
@@ -262,16 +264,19 @@ export class EmployeeRecords extends LitElement {
     super.connectedCallback();
     this.addEventListener('employee-created', this.handleNewEmployee as EventListener);
     this.addEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+    this.addEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
     this.removeEventListener('employee-created', this.handleNewEmployee as EventListener);
     this.removeEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+    this.removeEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
   }
 
   private handleFormSubmitted() {
     this.showForm = false;
+    this.editingEmployee = null;
   }
 
   private handleNewEmployee(e: CustomEvent) {
@@ -280,7 +285,7 @@ export class EmployeeRecords extends LitElement {
       id: this.employees.length + 1,
       ...newEmployee
     };
-    
+
     const isDuplicate = this.employees.some(emp => emp.email === employee.email);
     if (isDuplicate) {
       alert('An employee with this email already exists.');
@@ -289,6 +294,11 @@ export class EmployeeRecords extends LitElement {
 
     this.employees = [...this.employees, employee];
     this.currentPage = Math.ceil(this.employees.length / this.pageSize);
+  }
+
+  private handleEmployeeUpdated(e: CustomEvent) {
+    const updated = e.detail;
+    this.employees = this.employees.map(emp => emp.id === updated.id ? { ...emp, ...updated } : emp);
   }
 
   private get paginatedEmployees() {
@@ -312,6 +322,14 @@ export class EmployeeRecords extends LitElement {
 
   private toggleForm() {
     this.showForm = !this.showForm;
+    if (!this.showForm) {
+      this.editingEmployee = null;
+    }
+  }
+
+  private onEditEmployee(employee: Employee) {
+    this.editingEmployee = employee;
+    this.showForm = true;
   }
 
   override render() {
@@ -322,7 +340,7 @@ export class EmployeeRecords extends LitElement {
           <div style="display: flex; gap: 16px; align-items: center;">
             <button class="add-employee-btn" @click=${this.toggleForm}>
               <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-              ${this.showForm ? 'Cancel' : 'Add Employee'}
+              ${this.showForm && !this.editingEmployee ? 'Cancel' : 'Add Employee'}
             </button>
             <div class="toggle-view">
               <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
@@ -336,7 +354,7 @@ export class EmployeeRecords extends LitElement {
         </div>
         ${this.showForm ? html`
           <div class="form-container">
-            <employee-form></employee-form>
+            <employee-form .employee=${this.editingEmployee}></employee-form>
           </div>
         ` : ''}
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
@@ -381,6 +399,14 @@ export class EmployeeRecords extends LitElement {
               <td>${employee.email}</td>
               <td>${employee.department}</td>
               <td>${employee.position}</td>
+              <td class="actions-cell">
+                <button class="action-btn" title="Edit" @click=${() => this.onEditEmployee(employee)}>
+               <?xml version="1.0" encoding="utf-8"?>
+                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#ff6600"/>
+                </svg>
+                </button>
+              </td>
             </tr>
           `)}
         </tbody>

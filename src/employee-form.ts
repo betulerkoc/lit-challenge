@@ -1,8 +1,9 @@
-import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { LitElement, html, css, PropertyValues } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
+  @property({ type: Object }) employee: any = null;
   @state() private firstName = '';
   @state() private lastName = '';
   @state() private dateOfEmployment = '';
@@ -12,6 +13,7 @@ export class EmployeeForm extends LitElement {
   @state() private department = 'Analytics';
   @state() private position = 'Junior';
   @state() private errors: { [key: string]: string } = {};
+  @state() private isEditMode = false;
 
   static override styles = css`
     .form-wrapper {
@@ -90,6 +92,30 @@ export class EmployeeForm extends LitElement {
     }
   `;
 
+  override willUpdate(changedProps: PropertyValues) {
+    if (changedProps.has('employee') && this.employee) {
+      this.isEditMode = true;
+      this.firstName = this.employee.firstName || '';
+      this.lastName = this.employee.lastName || '';
+      this.dateOfEmployment = this.employee.dateOfEmployment || '';
+      this.dateOfBirth = this.employee.dateOfBirth || '';
+      this.phoneNumber = this.employee.phoneNumber || '';
+      this.email = this.employee.email || '';
+      this.department = this.employee.department || 'Analytics';
+      this.position = this.employee.position || 'Junior';
+    } else if (changedProps.has('employee') && !this.employee) {
+      this.isEditMode = false;
+      this.firstName = '';
+      this.lastName = '';
+      this.dateOfEmployment = '';
+      this.dateOfBirth = '';
+      this.phoneNumber = '';
+      this.email = '';
+      this.department = 'Analytics';
+      this.position = 'Junior';
+    }
+  }
+
   private validateForm(): boolean {
     const errors: { [key: string]: string } = {};
   
@@ -151,14 +177,14 @@ export class EmployeeForm extends LitElement {
     }
   }
 
-  private onSubmit(e: Event) {
+  private async onSubmit(e: Event) {
     e.preventDefault();
     
     if (!this.validateForm()) {
       return;
     }
 
-    const newEmployee = {
+    const employeeData = {
       firstName: this.firstName,
       lastName: this.lastName,
       dateOfEmployment: this.dateOfEmployment,
@@ -167,28 +193,28 @@ export class EmployeeForm extends LitElement {
       email: this.email,
       department: this.department,
       position: this.position,
+      id: this.employee?.id
     };
 
-    const event = new CustomEvent('employee-created', {
-      detail: newEmployee,
-      bubbles: true,
-      composed: true
-    });
-    
-    this.dispatchEvent(event);
+    if (this.isEditMode) {
+      if (!window.confirm('Are you sure you want to update this employee record?')) {
+        return;
+      }
+      this.dispatchEvent(new CustomEvent('employee-updated', {
+        detail: employeeData,
+        bubbles: true,
+        composed: true
+      }));
+      alert('Employee record updated successfully!');
+    } else {
+      this.dispatchEvent(new CustomEvent('employee-created', {
+        detail: employeeData,
+        bubbles: true,
+        composed: true
+      }));
+      alert('Employee record created successfully!');
+    }
 
-    this.firstName = '';
-    this.lastName = '';
-    this.dateOfEmployment = '';
-    this.dateOfBirth = '';
-    this.phoneNumber = '';
-    this.email = '';
-    this.department = 'Analytics';
-    this.position = 'Junior';
-    this.errors = {};
-    
-    alert('Employee record created successfully!');
-    
     this.dispatchEvent(new CustomEvent('form-submitted', {
       bubbles: true,
       composed: true
@@ -198,7 +224,7 @@ export class EmployeeForm extends LitElement {
   override render() {
     return html`
       <div class="form-wrapper">
-        <div class="form-title">Add New Employee</div>
+        <div class="form-title">${this.isEditMode ? 'Edit Employee' : 'Add New Employee'}</div>
         <form class="form-container" @submit=${this.onSubmit}>
           <label>First Name</label>
           <input 
@@ -281,7 +307,7 @@ export class EmployeeForm extends LitElement {
             <option value="Senior">Senior</option>
           </select>
 
-          <button class="btn" type="submit">Create Employee</button>
+          <button class="btn" type="submit">${this.isEditMode ? 'Update Employee' : 'Create Employee'}</button>
         </form>
       </div>
     `;
