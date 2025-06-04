@@ -1,9 +1,11 @@
 import { LitElement, html, css, PropertyValues } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { Employee } from './store/types';
+import { store } from './store/store';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
-  @property({ type: Object }) employee: any = null;
+  @property({ type: Object }) employee: Employee | null = null;
   @state() private firstName = '';
   @state() private lastName = '';
   @state() private dateOfEmployment = '';
@@ -105,15 +107,20 @@ export class EmployeeForm extends LitElement {
       this.position = this.employee.position || 'Junior';
     } else if (changedProps.has('employee') && !this.employee) {
       this.isEditMode = false;
-      this.firstName = '';
-      this.lastName = '';
-      this.dateOfEmployment = '';
-      this.dateOfBirth = '';
-      this.phoneNumber = '';
-      this.email = '';
-      this.department = 'Analytics';
-      this.position = 'Junior';
+      this.resetForm();
     }
+  }
+
+  private resetForm() {
+    this.firstName = '';
+    this.lastName = '';
+    this.dateOfEmployment = '';
+    this.dateOfBirth = '';
+    this.phoneNumber = '';
+    this.email = '';
+    this.department = 'Analytics';
+    this.position = 'Junior';
+    this.errors = {};
   }
 
   private validateForm(): boolean {
@@ -184,7 +191,8 @@ export class EmployeeForm extends LitElement {
       return;
     }
 
-    const employeeData = {
+    const employeeData: Employee = {
+      id: this.employee?.id || crypto.randomUUID(),
       firstName: this.firstName,
       lastName: this.lastName,
       dateOfEmployment: this.dateOfEmployment,
@@ -192,33 +200,31 @@ export class EmployeeForm extends LitElement {
       phoneNumber: this.phoneNumber,
       email: this.email,
       department: this.department,
-      position: this.position,
-      id: this.employee?.id
+      position: this.position
     };
 
-    if (this.isEditMode) {
-      if (!window.confirm('Are you sure you want to update this employee record?')) {
-        return;
+    try {
+      if (this.isEditMode) {
+        if (!window.confirm('Are you sure you want to update this employee record?')) {
+          return;
+        }
+        store.updateEmployee(employeeData);
+        alert('Employee record updated successfully!');
+      } else {
+        store.addEmployee(employeeData);
+        alert('Employee record created successfully!');
       }
-      this.dispatchEvent(new CustomEvent('employee-updated', {
-        detail: employeeData,
+      
+      this.dispatchEvent(new CustomEvent('form-submitted', {
         bubbles: true,
         composed: true
       }));
-      alert('Employee record updated successfully!');
-    } else {
-      this.dispatchEvent(new CustomEvent('employee-created', {
-        detail: employeeData,
-        bubbles: true,
-        composed: true
-      }));
-      alert('Employee record created successfully!');
+      
+      this.resetForm();
+    } catch (error) {
+      alert('An error occurred while saving the employee record.');
+      console.error('Error saving employee:', error);
     }
-
-    this.dispatchEvent(new CustomEvent('form-submitted', {
-      bubbles: true,
-      composed: true
-    }));
   }
 
   override render() {

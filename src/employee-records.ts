@@ -1,67 +1,12 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
-
-interface Employee {
-  id: number;
-  firstName: string;
-  lastName: string;
-  position: string;
-  department: string;
-  email: string;
-  phoneNumber: string;
-  dateOfEmployment: string;
-  dateOfBirth: string;
-}
+import { store } from './store/store';
+import { Employee } from './store/types';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
   @state()
-  private employees: Employee[] = [
-    {
-      id: 1,
-      firstName: 'Betty',
-      lastName: 'Erk',
-      position: 'Senior',
-      department: 'Engineering',
-      email: 'betty@example.com',
-      phoneNumber: '1234567890',
-      dateOfEmployment: '2020-01-01',
-      dateOfBirth: '1990-01-01',
-    },
-    {
-      id: 2,
-      firstName: 'Betty',
-      lastName: 'Erk',
-      position: 'Medior',
-      department: 'Analytics',
-      email: 'betty@example.com',
-      phoneNumber: '0987654321',
-      dateOfEmployment: '2020-02-01',
-      dateOfBirth: '1991-01-01',
-    },
-    {
-      id: 3,
-      firstName: 'Betty',
-      lastName: 'Erk',
-      position: 'Medior',
-      department: 'Analytics',
-      email: 'betty@example.com',
-      phoneNumber: '0987654321',
-      dateOfEmployment: '2020-02-01',
-      dateOfBirth: '1991-01-01',
-    },
-    {
-      id: 4,
-      firstName: 'Betty',
-      lastName: 'Erk',
-      position: 'Medior',
-      department: 'Analytics',
-      email: 'betty@example.com',
-      phoneNumber: '0987654321',
-      dateOfEmployment: '2020-02-01',
-      dateOfBirth: '1991-01-01',
-    }
-  ];
+  private employees: Employee[] = [];
 
   @state()
   viewMode: 'table' | 'list' = 'table';
@@ -73,6 +18,8 @@ export class EmployeeRecords extends LitElement {
 
   currentPage: number = 1;
   pageSize: number = 10;
+
+  private unsubscribe: (() => void) | null = null;
 
   static override styles = css`
     :host {
@@ -262,16 +209,18 @@ export class EmployeeRecords extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-    this.addEventListener('employee-created', this.handleNewEmployee as EventListener);
-    this.addEventListener('form-submitted', this.handleFormSubmitted as EventListener);
-    this.addEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
+
+    this.unsubscribe = store.subscribe((state) => {
+      this.employees = state.employees;
+      this.requestUpdate();
+    });
   }
 
   override disconnectedCallback() {
     super.disconnectedCallback();
-    this.removeEventListener('employee-created', this.handleNewEmployee as EventListener);
-    this.removeEventListener('form-submitted', this.handleFormSubmitted as EventListener);
-    this.removeEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   }
 
   private handleFormSubmitted() {
@@ -280,25 +229,15 @@ export class EmployeeRecords extends LitElement {
   }
 
   private handleNewEmployee(e: CustomEvent) {
-    const newEmployee = e.detail;
-    const employee: Employee = {
-      id: this.employees.length + 1,
-      ...newEmployee
-    };
-
-    const isDuplicate = this.employees.some(emp => emp.email === employee.email);
-    if (isDuplicate) {
-      alert('An employee with this email already exists.');
-      return;
-    }
-
-    this.employees = [...this.employees, employee];
-    this.currentPage = Math.ceil(this.employees.length / this.pageSize);
+    const employee = e.detail;
+    store.addEmployee(employee);
+    this.handleFormSubmitted();
   }
 
   private handleEmployeeUpdated(e: CustomEvent) {
-    const updated = e.detail;
-    this.employees = this.employees.map(emp => emp.id === updated.id ? { ...emp, ...updated } : emp);
+    const employee = e.detail;
+    store.updateEmployee(employee);
+    this.handleFormSubmitted();
   }
 
   private get paginatedEmployees() {
@@ -333,12 +272,8 @@ export class EmployeeRecords extends LitElement {
   }
 
   private onDeleteEmployee(employee: Employee) {
-    if (window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
-      this.employees = this.employees.filter(emp => emp.id !== employee.id);
-      if (this.editingEmployee && this.editingEmployee.id === employee.id) {
-        this.showForm = false;
-        this.editingEmployee = null;
-      }
+    if (confirm('Are you sure you want to delete this employee?')) {
+      store.deleteEmployee(employee.id);
     }
   }
 
