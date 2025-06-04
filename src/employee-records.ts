@@ -15,7 +15,8 @@ interface Employee {
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
-  employees: Employee[] = [
+  @state()
+  private employees: Employee[] = [
     {
       id: 1,
       firstName: 'Betty',
@@ -64,6 +65,10 @@ export class EmployeeRecords extends LitElement {
 
   @state()
   viewMode: 'table' | 'list' = 'table';
+  
+  @state()
+  private showForm = false;
+
   currentPage: number = 1;
   pageSize: number = 10;
 
@@ -223,7 +228,68 @@ export class EmployeeRecords extends LitElement {
       background: #ff6600;
       color: #fff;
     }
+    .add-employee-btn {
+      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
+    }
+    .add-employee-btn:hover {
+      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
+      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
+    }
+    .add-employee-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    .form-container {
+      margin-top: 24px;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 24px;
+    }
   `;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('employee-created', this.handleNewEmployee as EventListener);
+    this.addEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('employee-created', this.handleNewEmployee as EventListener);
+    this.removeEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+  }
+
+  private handleFormSubmitted() {
+    this.showForm = false;
+  }
+
+  private handleNewEmployee(e: CustomEvent) {
+    const newEmployee = e.detail;
+    const employee: Employee = {
+      id: this.employees.length + 1,
+      ...newEmployee
+    };
+    
+    const isDuplicate = this.employees.some(emp => emp.email === employee.email);
+    if (isDuplicate) {
+      alert('An employee with this email already exists.');
+      return;
+    }
+
+    this.employees = [...this.employees, employee];
+    this.currentPage = Math.ceil(this.employees.length / this.pageSize);
+  }
 
   private get paginatedEmployees() {
     const start = (this.currentPage - 1) * this.pageSize;
@@ -244,20 +310,35 @@ export class EmployeeRecords extends LitElement {
     }
   }
 
+  private toggleForm() {
+    this.showForm = !this.showForm;
+  }
+
   override render() {
     return html`
       <div class="records-container">
         <div class="header">
           <h2>Employee List</h2>
-          <div class="toggle-view">
-            <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <button class="add-employee-btn" @click=${this.toggleForm}>
+              <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              ${this.showForm ? 'Cancel' : 'Add Employee'}
             </button>
-            <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
-              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
-            </button>
+            <div class="toggle-view">
+              <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </button>
+              <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
+                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
+              </button>
+            </div>
           </div>
         </div>
+        ${this.showForm ? html`
+          <div class="form-container">
+            <employee-form></employee-form>
+          </div>
+        ` : ''}
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
         <div class="pagination">
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>

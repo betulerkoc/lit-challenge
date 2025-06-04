@@ -11,6 +11,7 @@ export class EmployeeForm extends LitElement {
   @state() private email = '';
   @state() private department = 'Analytics';
   @state() private position = 'Junior';
+  @state() private errors: { [key: string]: string } = {};
 
   static override styles = css`
     .form-wrapper {
@@ -78,14 +79,85 @@ export class EmployeeForm extends LitElement {
       background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
       box-shadow: 0 4px 16px rgba(255,102,0,0.12);
     }
+    .error-message {
+      color: #dc3545;
+      font-size: 0.875rem;
+      margin-top: -6px;
+      margin-bottom: 8px;
+    }
+    input.error, select.error {
+      border-color: #dc3545;
+    }
   `;
+
+  private validateForm(): boolean {
+    const errors: { [key: string]: string } = {};
+  
+    if (!this.firstName.trim()) {
+      errors.firstName = 'First name is required';
+    } else if (!/^[a-zA-Z\s]{2,50}$/.test(this.firstName)) {
+      errors.firstName = 'First name should only contain letters and spaces (2-50 characters)';
+    }
+
+    if (!this.lastName.trim()) {
+      errors.lastName = 'Last name is required';
+    } else if (!/^[a-zA-Z\s]{2,50}$/.test(this.lastName)) {
+      errors.lastName = 'Last name should only contain letters and spaces (2-50 characters)';
+    }
+
+    if (!this.dateOfEmployment) {
+      errors.dateOfEmployment = 'Date of employment is required';
+    } else {
+      const employmentDate = new Date(this.dateOfEmployment);
+      const today = new Date();
+      if (employmentDate > today) {
+        errors.dateOfEmployment = 'Date of employment cannot be in the future';
+      }
+    }
+
+    if (!this.dateOfBirth) {
+      errors.dateOfBirth = 'Date of birth is required';
+    } else {
+      const birthDate = new Date(this.dateOfBirth);
+      const today = new Date();
+      const age = today.getFullYear() - birthDate.getFullYear();
+      if (birthDate > today) {
+        errors.dateOfBirth = 'Date of birth cannot be in the future';
+      } else if (age < 18) {
+        errors.dateOfBirth = 'Employee must be at least 18 years old';
+      }
+    }
+
+    if (!this.phoneNumber) {
+      errors.phoneNumber = 'Phone number is required';
+    } else if (!/^\+?[\d\s-]{10,15}$/.test(this.phoneNumber)) {
+      errors.phoneNumber = 'Please enter a valid phone number (10-15 digits)';
+    }
+
+    if (!this.email) {
+      errors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+
+    this.errors = errors;
+    return Object.keys(errors).length === 0;
+  }
 
   private onInput(e: Event, field: string) {
     (this as any)[field] = (e.target as HTMLInputElement).value;
+    if (this.errors[field]) {
+      this.errors = { ...this.errors, [field]: '' };
+    }
   }
 
   private onSubmit(e: Event) {
     e.preventDefault();
+    
+    if (!this.validateForm()) {
+      return;
+    }
+
     const newEmployee = {
       firstName: this.firstName,
       lastName: this.lastName,
@@ -96,11 +168,14 @@ export class EmployeeForm extends LitElement {
       department: this.department,
       position: this.position,
     };
-    this.dispatchEvent(new CustomEvent('employee-created', {
+
+    const event = new CustomEvent('employee-created', {
       detail: newEmployee,
       bubbles: true,
       composed: true
-    }));
+    });
+    
+    this.dispatchEvent(event);
 
     this.firstName = '';
     this.lastName = '';
@@ -110,6 +185,14 @@ export class EmployeeForm extends LitElement {
     this.email = '';
     this.department = 'Analytics';
     this.position = 'Junior';
+    this.errors = {};
+    
+    alert('Employee record created successfully!');
+    
+    this.dispatchEvent(new CustomEvent('form-submitted', {
+      bubbles: true,
+      composed: true
+    }));
   }
 
   override render() {
@@ -118,31 +201,89 @@ export class EmployeeForm extends LitElement {
         <div class="form-title">Add New Employee</div>
         <form class="form-container" @submit=${this.onSubmit}>
           <label>First Name</label>
-          <input type="text" .value=${this.firstName} @input=${(e: Event) => this.onInput(e, 'firstName')} required />
+          <input 
+            type="text" 
+            .value=${this.firstName} 
+            @input=${(e: Event) => this.onInput(e, 'firstName')} 
+            class=${this.errors.firstName ? 'error' : ''}
+            required 
+          />
+          ${this.errors.firstName ? html`<div class="error-message">${this.errors.firstName}</div>` : ''}
+
           <label>Last Name</label>
-          <input type="text" .value=${this.lastName} @input=${(e: Event) => this.onInput(e, 'lastName')} required />
+          <input 
+            type="text" 
+            .value=${this.lastName} 
+            @input=${(e: Event) => this.onInput(e, 'lastName')} 
+            class=${this.errors.lastName ? 'error' : ''}
+            required 
+          />
+          ${this.errors.lastName ? html`<div class="error-message">${this.errors.lastName}</div>` : ''}
+
           <label>Date of Employment</label>
-          <input type="date" .value=${this.dateOfEmployment} @input=${(e: Event) => this.onInput(e, 'dateOfEmployment')} required />
+          <input 
+            type="date" 
+            .value=${this.dateOfEmployment} 
+            @input=${(e: Event) => this.onInput(e, 'dateOfEmployment')} 
+            class=${this.errors.dateOfEmployment ? 'error' : ''}
+            required 
+          />
+          ${this.errors.dateOfEmployment ? html`<div class="error-message">${this.errors.dateOfEmployment}</div>` : ''}
+
           <label>Date of Birth</label>
-          <input type="date" .value=${this.dateOfBirth} @input=${(e: Event) => this.onInput(e, 'dateOfBirth')} required />
+          <input 
+            type="date" 
+            .value=${this.dateOfBirth} 
+            @input=${(e: Event) => this.onInput(e, 'dateOfBirth')} 
+            class=${this.errors.dateOfBirth ? 'error' : ''}
+            required 
+          />
+          ${this.errors.dateOfBirth ? html`<div class="error-message">${this.errors.dateOfBirth}</div>` : ''}
+
           <label>Phone Number</label>
-          <input type="text" .value=${this.phoneNumber} @input=${(e: Event) => this.onInput(e, 'phoneNumber')} required />
+          <input 
+            type="tel" 
+            .value=${this.phoneNumber} 
+            @input=${(e: Event) => this.onInput(e, 'phoneNumber')} 
+            class=${this.errors.phoneNumber ? 'error' : ''}
+            required 
+          />
+          ${this.errors.phoneNumber ? html`<div class="error-message">${this.errors.phoneNumber}</div>` : ''}
+
           <label>Email Address</label>
-          <input type="email" .value=${this.email} @input=${(e: Event) => this.onInput(e, 'email')} required />
+          <input 
+            type="email" 
+            .value=${this.email} 
+            @input=${(e: Event) => this.onInput(e, 'email')} 
+            class=${this.errors.email ? 'error' : ''}
+            required 
+          />
+          ${this.errors.email ? html`<div class="error-message">${this.errors.email}</div>` : ''}
+
           <label>Department</label>
-          <select .value=${this.department} @change=${(e: Event) => this.onInput(e, 'department')} required>
+          <select 
+            .value=${this.department} 
+            @change=${(e: Event) => this.onInput(e, 'department')} 
+            required
+          >
             <option value="Analytics">Analytics</option>
             <option value="Tech">Tech</option>
           </select>
+
           <label>Position</label>
-          <select .value=${this.position} @change=${(e: Event) => this.onInput(e, 'position')} required>
+          <select 
+            .value=${this.position} 
+            @change=${(e: Event) => this.onInput(e, 'position')} 
+            required
+          >
             <option value="Junior">Junior</option>
             <option value="Medior">Medior</option>
             <option value="Senior">Senior</option>
           </select>
+
           <button class="btn" type="submit">Create Employee</button>
         </form>
       </div>
     `;
   }
-} 
+}
