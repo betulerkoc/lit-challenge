@@ -9,7 +9,8 @@ class Store {
     this.state = {
       employees: [],
       loading: false,
-      error: null
+      error: null,
+      editingEmployee: null
     };
     this.loadState();
   }
@@ -123,6 +124,14 @@ class Store {
   debugStorage(): void {
     console.log('Current localStorage state:', localStorage.getItem(this.STORAGE_KEY));
     console.log('Current in-memory state:', this.state);
+  }
+
+  setEditingEmployee(employee: Employee | null): void {
+    this.state = {
+      ...this.state,
+      editingEmployee: employee
+    };
+    this.notifySubscribers();
   }
 }
 

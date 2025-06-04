@@ -1,11 +1,11 @@
-import { LitElement, html, css, PropertyValues } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { LitElement, html, css } from 'lit';
+import { customElement, state } from 'lit/decorators.js';
 import { Employee } from './store/types';
 import { store } from './store/store';
+import { Router } from '@vaadin/router';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
-  @property({ type: Object }) employee: Employee | null = null;
   @state() private firstName = '';
   @state() private lastName = '';
   @state() private dateOfEmployment = '';
@@ -16,6 +16,35 @@ export class EmployeeForm extends LitElement {
   @state() private position = 'Junior';
   @state() private errors: { [key: string]: string } = {};
   @state() private isEditMode = false;
+
+  private unsubscribe: (() => void) | null = null;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.unsubscribe = store.subscribe((state) => {
+      if (state.editingEmployee) {
+        this.isEditMode = true;
+        this.firstName = state.editingEmployee.firstName || '';
+        this.lastName = state.editingEmployee.lastName || '';
+        this.dateOfEmployment = state.editingEmployee.dateOfEmployment || '';
+        this.dateOfBirth = state.editingEmployee.dateOfBirth || '';
+        this.phoneNumber = state.editingEmployee.phoneNumber || '';
+        this.email = state.editingEmployee.email || '';
+        this.department = state.editingEmployee.department || 'Analytics';
+        this.position = state.editingEmployee.position || 'Junior';
+      } else {
+        this.isEditMode = false;
+        this.resetForm();
+      }
+    });
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
+  }
 
   static override styles = css`
     .form-wrapper {
@@ -94,23 +123,6 @@ export class EmployeeForm extends LitElement {
     }
   `;
 
-  override willUpdate(changedProps: PropertyValues) {
-    if (changedProps.has('employee') && this.employee) {
-      this.isEditMode = true;
-      this.firstName = this.employee.firstName || '';
-      this.lastName = this.employee.lastName || '';
-      this.dateOfEmployment = this.employee.dateOfEmployment || '';
-      this.dateOfBirth = this.employee.dateOfBirth || '';
-      this.phoneNumber = this.employee.phoneNumber || '';
-      this.email = this.employee.email || '';
-      this.department = this.employee.department || 'Analytics';
-      this.position = this.employee.position || 'Junior';
-    } else if (changedProps.has('employee') && !this.employee) {
-      this.isEditMode = false;
-      this.resetForm();
-    }
-  }
-
   private resetForm() {
     this.firstName = '';
     this.lastName = '';
@@ -128,14 +140,14 @@ export class EmployeeForm extends LitElement {
   
     if (!this.firstName.trim()) {
       errors.firstName = 'First name is required';
-    } else if (!/^[a-zA-Z\s]{2,50}$/.test(this.firstName)) {
-      errors.firstName = 'First name should only contain letters and spaces (2-50 characters)';
+    } else if (!/^[a-zA-ZÀ-ÿ\s'-]{2,50}$/.test(this.firstName)) {
+      errors.firstName = 'First name should only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
     }
 
     if (!this.lastName.trim()) {
       errors.lastName = 'Last name is required';
-    } else if (!/^[a-zA-Z\s]{2,50}$/.test(this.lastName)) {
-      errors.lastName = 'Last name should only contain letters and spaces (2-50 characters)';
+    } else if (!/^[a-zA-ZÀ-ÿ\s'-]{2,50}$/.test(this.lastName)) {
+      errors.lastName = 'Last name should only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
     }
 
     if (!this.dateOfEmployment) {
@@ -192,7 +204,7 @@ export class EmployeeForm extends LitElement {
     }
 
     const employeeData: Employee = {
-      id: this.employee?.id || crypto.randomUUID(),
+      id: store.getState().editingEmployee?.id || crypto.randomUUID(),
       firstName: this.firstName,
       lastName: this.lastName,
       dateOfEmployment: this.dateOfEmployment,
@@ -209,18 +221,21 @@ export class EmployeeForm extends LitElement {
           return;
         }
         store.updateEmployee(employeeData);
-        alert('Employee record updated successfully!');
+        await new Promise(resolve => {
+          alert('Employee record updated successfully!');
+          resolve(true);
+        });
       } else {
         store.addEmployee(employeeData);
-        alert('Employee record created successfully!');
+        await new Promise(resolve => {
+          alert('Employee record created successfully!');
+          resolve(true);
+        });
       }
       
-      this.dispatchEvent(new CustomEvent('form-submitted', {
-        bubbles: true,
-        composed: true
-      }));
-      
+      store.setEditingEmployee(null);
       this.resetForm();
+      Router.go('/');
     } catch (error) {
       alert('An error occurred while saving the employee record.');
       console.error('Error saving employee:', error);

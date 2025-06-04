@@ -2,6 +2,7 @@ import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { store } from './store/store';
 import { Employee } from './store/types';
+import { Router } from '@vaadin/router';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
@@ -10,11 +11,6 @@ export class EmployeeRecords extends LitElement {
 
   @state()
   viewMode: 'table' | 'list' = 'table';
-
-  @state()
-  private showForm = false;
-  @state()
-  private editingEmployee: Employee | null = null;
 
   currentPage: number = 1;
   pageSize: number = 10;
@@ -243,8 +239,8 @@ export class EmployeeRecords extends LitElement {
   }
 
   private onEditEmployee(employee: Employee) {
-    this.editingEmployee = employee;
-    this.showForm = true;
+    store.setEditingEmployee(employee);
+    Router.go('/form');
   }
 
   private onDeleteEmployee(employee: Employee) {
@@ -269,11 +265,6 @@ export class EmployeeRecords extends LitElement {
             </div>
           </div>
         </div>
-        ${this.showForm ? html`
-          <div class="form-container">
-            <employee-form .employee=${this.editingEmployee}></employee-form>
-          </div>
-        ` : ''}
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
         <div class="pagination">
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>
