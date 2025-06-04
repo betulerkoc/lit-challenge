@@ -21,13 +21,14 @@
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
+    "useDefineForClassFields": false,
     "plugins": [
       {
         "name": "ts-lit-plugin",
         "strict": true
       }
     ],
-    "types": ["mocha"]
+    "types": ["@open-wc/testing", "mocha"]
   },
   "include": ["src/**/*.ts"],
   "exclude": []

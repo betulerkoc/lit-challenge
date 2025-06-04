@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { Employee } from './store/types';
-import { store } from './store/store';
+import { store, addEmployee, updateEmployee, setEditingEmployee } from './store/store';
 import { Router } from '@vaadin/router';
 import { translate } from './i18n/i18n';
 
@@ -227,20 +227,20 @@ export class EmployeeForm extends LitElement {
         if (!window.confirm(translate('alert.updateConfirm'))) {
           return;
         }
-        store.updateEmployee(employeeData);
+        updateEmployee(employeeData);
         await new Promise(resolve => {
           alert(translate('alert.updateSuccess'));
           resolve(true);
         });
       } else {
-        store.addEmployee(employeeData);
+        addEmployee(employeeData);
         await new Promise(resolve => {
           alert(translate('alert.createSuccess'));
           resolve(true);
         });
       }
       
-      store.setEditingEmployee(null);
+      setEditingEmployee(null);
       this.resetForm();
       Router.go('/');
     } catch (error) {
