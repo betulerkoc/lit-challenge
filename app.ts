@@ -1,8 +1,9 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
 import './src/employee-records';
 import './src/employee-form';
 import './src/nav-menu';
+import { Router } from '@vaadin/router';
 
 @customElement('management-app')
 export class App extends LitElement {
@@ -22,33 +23,23 @@ export class App extends LitElement {
         }
     `;
 
-    @state()
-    private currentPage = 'records';
-
-    override render() {
-        return html`
-            <nav-menu 
-                .currentPage=${this.currentPage}
-                @navigation=${this._handleNavigation}
-            ></nav-menu>
-            <div class="container">
-                ${this._renderPage()}
-            </div>
-        `;
-    }
-
-    private _renderPage() {
-        switch (this.currentPage) {
-            case 'form':
-                return html`<employee-form></employee-form>`;
-            case 'records':
-            default:
-                return html`<employee-records></employee-records>`;
+    override firstUpdated() {
+        const outlet = this.shadowRoot?.getElementById('outlet');
+        if (outlet) {
+            const router = new Router(outlet);
+            router.setRoutes([
+                { path: '/', component: 'employee-records' },
+                { path: '/form', component: 'employee-form' },
+            ]);
         }
     }
 
-    private _handleNavigation(e: CustomEvent) {
-        const path = e.detail.path;
-        this.currentPage = path === '/' ? 'records' : path.slice(1);
+    override render() {
+        return html`
+            <nav-menu></nav-menu>
+            <div class="container">
+                <div id="outlet"></div>
+            </div>
+        `;
     }
 } 

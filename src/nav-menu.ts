@@ -1,5 +1,6 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement } from 'lit/decorators.js';
+import { Router } from '@vaadin/router';
 
 @customElement('nav-menu')
 export class NavMenu extends LitElement {
@@ -99,9 +100,6 @@ export class NavMenu extends LitElement {
     }
   `;
 
-  @property({ type: String })
-  currentPage = '';
-
   override render() {
     return html`
       <header class="header">
@@ -111,7 +109,7 @@ export class NavMenu extends LitElement {
         <div class="nav-actions">
           <a 
             href="/" 
-            class="nav-link ${this.currentPage === 'records' ? 'active' : ''}"
+            class="nav-link"
             @click=${this._handleNavigation}
           >
           <svg fill="#FF6600" width="18" height="18" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -120,7 +118,7 @@ export class NavMenu extends LitElement {
             Employees
           </a>
           <button 
-            class="add-btn ${this.currentPage === 'form' ? 'active' : ''}"
+            class="add-btn"
             @click=${(e: Event) => this._handleNavigation(e, '/form')}
           >
             <svg width="18" height="18" fill="none" stroke="#FF6600" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
@@ -138,11 +136,6 @@ export class NavMenu extends LitElement {
       const link = e.currentTarget as HTMLAnchorElement;
       navPath = link.getAttribute('href') || '/';
     }
-    window.history.pushState({}, '', navPath);
-    this.dispatchEvent(new CustomEvent('navigation', {
-      detail: { path: navPath },
-      bubbles: true,
-      composed: true
-    }));
+    Router.go(navPath);
   }
 } 

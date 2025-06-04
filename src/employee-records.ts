@@ -1,5 +1,5 @@
 import { LitElement, html, css } from 'lit';
-import { customElement, property, state } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { store } from './store/store';
 import { Employee } from './store/types';
 
@@ -223,23 +223,6 @@ export class EmployeeRecords extends LitElement {
     }
   }
 
-  private handleFormSubmitted() {
-    this.showForm = false;
-    this.editingEmployee = null;
-  }
-
-  private handleNewEmployee(e: CustomEvent) {
-    const employee = e.detail;
-    store.addEmployee(employee);
-    this.handleFormSubmitted();
-  }
-
-  private handleEmployeeUpdated(e: CustomEvent) {
-    const employee = e.detail;
-    store.updateEmployee(employee);
-    this.handleFormSubmitted();
-  }
-
   private get paginatedEmployees() {
     const start = (this.currentPage - 1) * this.pageSize;
     return this.employees.slice(start, start + this.pageSize);
@@ -256,13 +239,6 @@ export class EmployeeRecords extends LitElement {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-    }
-  }
-
-  private toggleForm() {
-    this.showForm = !this.showForm;
-    if (!this.showForm) {
-      this.editingEmployee = null;
     }
   }
 
@@ -283,10 +259,6 @@ export class EmployeeRecords extends LitElement {
         <div class="header">
           <h2>Employee List</h2>
           <div style="display: flex; gap: 16px; align-items: center;">
-            <button class="add-employee-btn" @click=${this.toggleForm}>
-              <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-              ${this.showForm && !this.editingEmployee ? 'Cancel' : 'Add Employee'}
-            </button>
             <div class="toggle-view">
               <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
                 <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
