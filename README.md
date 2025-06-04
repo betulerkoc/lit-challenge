@@ -52,8 +52,8 @@ A web app built with LitElement to manage employee records.
 
 - [X] **Navigation Menu**
 
-- [ ] **Routing**
-  - [ ] Integrate routing (e.g., using **Vaadin Router**)
+- [X] **Routing**
+  - [X] Integrate routing (e.g., using **Vaadin Router**)
 
 - [ ] **Responsive Design**
   - [ ] Desktop and mobile support
@@ -62,8 +62,8 @@ A web app built with LitElement to manage employee records.
   - [X] Persist data in browser memory
   - [X] Use a custom solution or a 3rd-party library (e.g., Redux)
 
-- [ ] **Localization**
-  - [ ] Support **English** and **Turkish**
+- [X] **Localization**
+  - [X] Support **English** and **Turkish**
 
 - [ ] **Testing**
   - [ ] Add unit tests for all components and logic

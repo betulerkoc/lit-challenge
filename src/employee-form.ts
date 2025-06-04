@@ -3,6 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { Employee } from './store/types';
 import { store } from './store/store';
 import { Router } from '@vaadin/router';
+import { translate } from './i18n/i18n';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
@@ -37,6 +38,7 @@ export class EmployeeForm extends LitElement {
         this.resetForm();
       }
     });
+    window.addEventListener('lang-changed', this._onLangChanged);
   }
 
   override disconnectedCallback() {
@@ -44,7 +46,12 @@ export class EmployeeForm extends LitElement {
     if (this.unsubscribe) {
       this.unsubscribe();
     }
+    window.removeEventListener('lang-changed', this._onLangChanged);
   }
+
+  private _onLangChanged = () => {
+    this.requestUpdate();
+  };
 
   static override styles = css`
     .form-wrapper {
@@ -139,50 +146,50 @@ export class EmployeeForm extends LitElement {
     const errors: { [key: string]: string } = {};
   
     if (!this.firstName.trim()) {
-      errors.firstName = 'First name is required';
+      errors.firstName = translate('validation.firstName.required');
     } else if (!/^[a-zA-ZÀ-ÿ\s'-]{2,50}$/.test(this.firstName)) {
-      errors.firstName = 'First name should only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
+      errors.firstName = translate('validation.firstName.format');
     }
 
     if (!this.lastName.trim()) {
-      errors.lastName = 'Last name is required';
+      errors.lastName = translate('validation.lastName.required');
     } else if (!/^[a-zA-ZÀ-ÿ\s'-]{2,50}$/.test(this.lastName)) {
-      errors.lastName = 'Last name should only contain letters, spaces, hyphens, and apostrophes (2-50 characters)';
+      errors.lastName = translate('validation.lastName.format');
     }
 
     if (!this.dateOfEmployment) {
-      errors.dateOfEmployment = 'Date of employment is required';
+      errors.dateOfEmployment = translate('validation.dateOfEmployment.required');
     } else {
       const employmentDate = new Date(this.dateOfEmployment);
       const today = new Date();
       if (employmentDate > today) {
-        errors.dateOfEmployment = 'Date of employment cannot be in the future';
+        errors.dateOfEmployment = translate('validation.dateOfEmployment.future');
       }
     }
 
     if (!this.dateOfBirth) {
-      errors.dateOfBirth = 'Date of birth is required';
+      errors.dateOfBirth = translate('validation.dateOfBirth.required');
     } else {
       const birthDate = new Date(this.dateOfBirth);
       const today = new Date();
       const age = today.getFullYear() - birthDate.getFullYear();
       if (birthDate > today) {
-        errors.dateOfBirth = 'Date of birth cannot be in the future';
+        errors.dateOfBirth = translate('validation.dateOfBirth.future');
       } else if (age < 18) {
-        errors.dateOfBirth = 'Employee must be at least 18 years old';
+        errors.dateOfBirth = translate('validation.dateOfBirth.age');
       }
     }
 
     if (!this.phoneNumber) {
-      errors.phoneNumber = 'Phone number is required';
+      errors.phoneNumber = translate('validation.phoneNumber.required');
     } else if (!/^\+?[\d\s-]{10,15}$/.test(this.phoneNumber)) {
-      errors.phoneNumber = 'Please enter a valid phone number (10-15 digits)';
+      errors.phoneNumber = translate('validation.phoneNumber.format');
     }
 
     if (!this.email) {
-      errors.email = 'Email is required';
+      errors.email = translate('validation.email.required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
-      errors.email = 'Please enter a valid email address';
+      errors.email = translate('validation.email.format');
     }
 
     this.errors = errors;
@@ -217,18 +224,18 @@ export class EmployeeForm extends LitElement {
 
     try {
       if (this.isEditMode) {
-        if (!window.confirm('Are you sure you want to update this employee record?')) {
+        if (!window.confirm(translate('alert.updateConfirm'))) {
           return;
         }
         store.updateEmployee(employeeData);
         await new Promise(resolve => {
-          alert('Employee record updated successfully!');
+          alert(translate('alert.updateSuccess'));
           resolve(true);
         });
       } else {
         store.addEmployee(employeeData);
         await new Promise(resolve => {
-          alert('Employee record created successfully!');
+          alert(translate('alert.createSuccess'));
           resolve(true);
         });
       }
@@ -237,7 +244,7 @@ export class EmployeeForm extends LitElement {
       this.resetForm();
       Router.go('/');
     } catch (error) {
-      alert('An error occurred while saving the employee record.');
+      alert(translate('alert.error'));
       console.error('Error saving employee:', error);
     }
   }
@@ -245,9 +252,9 @@ export class EmployeeForm extends LitElement {
   override render() {
     return html`
       <div class="form-wrapper">
-        <div class="form-title">${this.isEditMode ? 'Edit Employee' : 'Add New Employee'}</div>
+        <div class="form-title">${this.isEditMode ? translate('form.title.edit') : translate('form.title.add')}</div>
         <form class="form-container" @submit=${this.onSubmit}>
-          <label>First Name</label>
+          <label>${translate('form.firstName')}</label>
           <input 
             type="text" 
             .value=${this.firstName} 
@@ -257,7 +264,7 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.firstName ? html`<div class="error-message">${this.errors.firstName}</div>` : ''}
 
-          <label>Last Name</label>
+          <label>${translate('form.lastName')}</label>
           <input 
             type="text" 
             .value=${this.lastName} 
@@ -267,7 +274,7 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.lastName ? html`<div class="error-message">${this.errors.lastName}</div>` : ''}
 
-          <label>Date of Employment</label>
+          <label>${translate('form.dateOfEmployment')}</label>
           <input 
             type="date" 
             .value=${this.dateOfEmployment} 
@@ -277,7 +284,7 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.dateOfEmployment ? html`<div class="error-message">${this.errors.dateOfEmployment}</div>` : ''}
 
-          <label>Date of Birth</label>
+          <label>${translate('form.dateOfBirth')}</label>
           <input 
             type="date" 
             .value=${this.dateOfBirth} 
@@ -287,7 +294,7 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.dateOfBirth ? html`<div class="error-message">${this.errors.dateOfBirth}</div>` : ''}
 
-          <label>Phone Number</label>
+          <label>${translate('form.phoneNumber')}</label>
           <input 
             type="tel" 
             .value=${this.phoneNumber} 
@@ -297,7 +304,7 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.phoneNumber ? html`<div class="error-message">${this.errors.phoneNumber}</div>` : ''}
 
-          <label>Email Address</label>
+          <label>${translate('form.email')}</label>
           <input 
             type="email" 
             .value=${this.email} 
@@ -307,28 +314,28 @@ export class EmployeeForm extends LitElement {
           />
           ${this.errors.email ? html`<div class="error-message">${this.errors.email}</div>` : ''}
 
-          <label>Department</label>
+          <label>${translate('form.department')}</label>
           <select 
             .value=${this.department} 
             @change=${(e: Event) => this.onInput(e, 'department')} 
             required
           >
-            <option value="Analytics">Analytics</option>
-            <option value="Tech">Tech</option>
+            <option value="Analytics">${translate('department.analytics')}</option>
+            <option value="Tech">${translate('department.tech')}</option>
           </select>
 
-          <label>Position</label>
+          <label>${translate('form.position')}</label>
           <select 
             .value=${this.position} 
             @change=${(e: Event) => this.onInput(e, 'position')} 
             required
           >
-            <option value="Junior">Junior</option>
-            <option value="Medior">Medior</option>
-            <option value="Senior">Senior</option>
+            <option value="Junior">${translate('position.junior')}</option>
+            <option value="Medior">${translate('position.medior')}</option>
+            <option value="Senior">${translate('position.senior')}</option>
           </select>
 
-          <button class="btn" type="submit">${this.isEditMode ? 'Update Employee' : 'Create Employee'}</button>
+          <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
         </form>
       </div>
     `;
