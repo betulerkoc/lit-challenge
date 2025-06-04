@@ -50,8 +50,7 @@ A web app built with LitElement to manage employee records.
 
 ### Additional Requirements
 
-- [ ] **Navigation Menu**
-  - [ ] Create a reusable menu component
+- [X] **Navigation Menu**
 
 - [ ] **Routing**
   - [ ] Integrate routing (e.g., using **Vaadin Router**)
