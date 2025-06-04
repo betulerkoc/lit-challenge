@@ -1,6 +1,6 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { store } from './store/store';
+import { store, setEditingEmployee, deleteEmployee } from './store/store';
 import { Employee } from './store/types';
 import { Router } from '@vaadin/router';
 import { translate } from './i18n/i18n';
@@ -13,6 +13,7 @@ export class EmployeeRecords extends LitElement {
   @state()
   viewMode: 'table' | 'list' = 'table';
 
+  @state()
   currentPage: number = 1;
   pageSize: number = 10;
 
@@ -245,13 +246,13 @@ export class EmployeeRecords extends LitElement {
   }
 
   private onEditEmployee(employee: Employee) {
-    store.setEditingEmployee(employee);
+    setEditingEmployee(employee);
     Router.go('/form');
   }
 
   private onDeleteEmployee(employee: Employee) {
     if (confirm('Are you sure you want to delete this employee?')) {
-      store.deleteEmployee(employee.id);
+      deleteEmployee(employee.id);
     }
   }
 

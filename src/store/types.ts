@@ -8,14 +8,13 @@ export interface Employee {
   position: string;
   dateOfEmployment: string;
   dateOfBirth: string;
-  salary?: number;
 }
 
 export interface AppState {
   employees: Employee[];
+  editingEmployee: Employee | null;
   loading: boolean;
   error: string | null;
-  editingEmployee: Employee | null;
 }
 
 export type StoreSubscriber = (state: AppState) => void; 
