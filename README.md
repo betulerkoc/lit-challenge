@@ -59,9 +59,9 @@ A web app built with LitElement to manage employee records.
 - [ ] **Responsive Design**
   - [ ] Desktop and mobile support
 
-- [ ] **State Management**
-  - [ ] Persist data in browser memory
-  - [ ] Use a custom solution or a 3rd-party library (e.g., Redux)
+- [X] **State Management**
+  - [X] Persist data in browser memory
+  - [X] Use a custom solution or a 3rd-party library (e.g., Redux)
 
 - [ ] **Localization**
   - [ ] Support **English** and **Turkish**
