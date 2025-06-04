@@ -15,6 +15,7 @@ export interface AppState {
   employees: Employee[];
   loading: boolean;
   error: string | null;
+  editingEmployee: Employee | null;
 }
 
 export type StoreSubscriber = (state: AppState) => void; 

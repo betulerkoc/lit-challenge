@@ -11,11 +11,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@vaadin/router": "^2.0.0",
     "lit": "^2.8.0"
   },
   "devDependencies": {
-    "vite": "^5.2.8",
     "@types/node": "^20.11.24",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vite": "^5.2.8"
   }
 }
