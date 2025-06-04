@@ -15,7 +15,8 @@ interface Employee {
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
-  employees: Employee[] = [
+  @state()
+  private employees: Employee[] = [
     {
       id: 1,
       firstName: 'Betty',
@@ -62,11 +63,18 @@ export class EmployeeRecords extends LitElement {
     }
   ];
 
+  @state()
   viewMode: 'table' | 'list' = 'table';
+
+  @state()
+  private showForm = false;
+  @state()
+  private editingEmployee: Employee | null = null;
+
   currentPage: number = 1;
   pageSize: number = 10;
 
-  static styles = css`
+  static override styles = css`
     :host {
       display: block;
       padding: 32px 0;
@@ -222,7 +230,76 @@ export class EmployeeRecords extends LitElement {
       background: #ff6600;
       color: #fff;
     }
+    .add-employee-btn {
+      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: background 0.2s, box-shadow 0.2s;
+      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
+    }
+    .add-employee-btn:hover {
+      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
+      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
+    }
+    .add-employee-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    .form-container {
+      margin-top: 24px;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 24px;
+    }
   `;
+
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('employee-created', this.handleNewEmployee as EventListener);
+    this.addEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+    this.addEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
+  }
+
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.removeEventListener('employee-created', this.handleNewEmployee as EventListener);
+    this.removeEventListener('form-submitted', this.handleFormSubmitted as EventListener);
+    this.removeEventListener('employee-updated', this.handleEmployeeUpdated as EventListener);
+  }
+
+  private handleFormSubmitted() {
+    this.showForm = false;
+    this.editingEmployee = null;
+  }
+
+  private handleNewEmployee(e: CustomEvent) {
+    const newEmployee = e.detail;
+    const employee: Employee = {
+      id: this.employees.length + 1,
+      ...newEmployee
+    };
+
+    const isDuplicate = this.employees.some(emp => emp.email === employee.email);
+    if (isDuplicate) {
+      alert('An employee with this email already exists.');
+      return;
+    }
+
+    this.employees = [...this.employees, employee];
+    this.currentPage = Math.ceil(this.employees.length / this.pageSize);
+  }
+
+  private handleEmployeeUpdated(e: CustomEvent) {
+    const updated = e.detail;
+    this.employees = this.employees.map(emp => emp.id === updated.id ? { ...emp, ...updated } : emp);
+  }
 
   private get paginatedEmployees() {
     const start = (this.currentPage - 1) * this.pageSize;
@@ -233,30 +310,63 @@ export class EmployeeRecords extends LitElement {
     return Math.ceil(this.employees.length / this.pageSize);
   }
 
-  private goToPage(page: number) {
+  setViewMode(mode: 'table' | 'list') {
+    this.viewMode = mode;
+  }
+
+  goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
     }
   }
 
-  private setViewMode(mode: 'table' | 'list') {
-    this.viewMode = mode;
+  private toggleForm() {
+    this.showForm = !this.showForm;
+    if (!this.showForm) {
+      this.editingEmployee = null;
+    }
   }
 
-  render() {
+  private onEditEmployee(employee: Employee) {
+    this.editingEmployee = employee;
+    this.showForm = true;
+  }
+
+  private onDeleteEmployee(employee: Employee) {
+    if (window.confirm(`Are you sure you want to delete ${employee.firstName} ${employee.lastName}?`)) {
+      this.employees = this.employees.filter(emp => emp.id !== employee.id);
+      if (this.editingEmployee && this.editingEmployee.id === employee.id) {
+        this.showForm = false;
+        this.editingEmployee = null;
+      }
+    }
+  }
+
+  override render() {
     return html`
       <div class="records-container">
         <div class="header">
           <h2>Employee List</h2>
-          <div class="toggle-view">
-            <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
-              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          <div style="display: flex; gap: 16px; align-items: center;">
+            <button class="add-employee-btn" @click=${this.toggleForm}>
+              <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+              ${this.showForm && !this.editingEmployee ? 'Cancel' : 'Add Employee'}
             </button>
-            <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
-              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
-            </button>
+            <div class="toggle-view">
+              <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
+                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              </button>
+              <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
+                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
+              </button>
+            </div>
           </div>
         </div>
+        ${this.showForm ? html`
+          <div class="form-container">
+            <employee-form .employee=${this.editingEmployee}></employee-form>
+          </div>
+        ` : ''}
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
         <div class="pagination">
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>
@@ -270,7 +380,7 @@ export class EmployeeRecords extends LitElement {
     `;
   }
 
-  private renderTableView() {
+  renderTableView() {
     return html`
       <table class="employee-list">
         <thead>
@@ -299,6 +409,18 @@ export class EmployeeRecords extends LitElement {
               <td>${employee.email}</td>
               <td>${employee.department}</td>
               <td>${employee.position}</td>
+              <td class="actions-cell">
+                <button class="action-btn" title="Edit" @click=${() => this.onEditEmployee(employee)}>
+                  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#ff6600"/>
+                  </svg>
+                </button>
+                <button class="action-btn" title="Delete" @click=${() => this.onDeleteEmployee(employee)}>
+                  <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.6134 3.1134 14.351 3 14.08 3H9.92C9.64903 3 9.3866 3.1134 9.21 3.29L8.5 4H5V6H19V4Z" fill="#ff6600"/>
+                  </svg>
+                </button>
+              </td>
             </tr>
           `)}
         </tbody>
@@ -306,7 +428,7 @@ export class EmployeeRecords extends LitElement {
     `;
   }
 
-  private renderListView() {
+  renderListView() {
     return html`
       <div class="card-list">
         ${this.paginatedEmployees.map(employee => html`
@@ -320,6 +442,18 @@ export class EmployeeRecords extends LitElement {
               <div class="card-field"><span class="card-label">Email:</span> ${employee.email}</div>
               <div class="card-field"><span class="card-label">Department:</span> ${employee.department}</div>
               <div class="card-field"><span class="card-label">Position:</span> ${employee.position}</div>
+            </div>
+            <div class="card-actions">
+              <button class="action-btn" title="Edit" @click=${() => this.onEditEmployee(employee)}>
+                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#ff6600"/>
+                </svg>
+              </button>
+              <button class="action-btn" title="Delete" @click=${() => this.onDeleteEmployee(employee)}>
+                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.6134 3.1134 14.351 3 14.08 3H9.92C9.64903 3 9.3866 3.1134 9.21 3.29L8.5 4H5V6H19V4Z" fill="#ff6600"/>
+                </svg>
+              </button>
             </div>
           </div>
         `)}
