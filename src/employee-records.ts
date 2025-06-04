@@ -3,6 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { store } from './store/store';
 import { Employee } from './store/types';
 import { Router } from '@vaadin/router';
+import { translate } from './i18n/i18n';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
@@ -205,7 +206,7 @@ export class EmployeeRecords extends LitElement {
 
   override connectedCallback() {
     super.connectedCallback();
-
+    window.addEventListener('lang-changed', this._onLangChanged);
     this.unsubscribe = store.subscribe((state) => {
       this.employees = state.employees;
       this.requestUpdate();
@@ -214,10 +215,15 @@ export class EmployeeRecords extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    window.removeEventListener('lang-changed', this._onLangChanged);
     if (this.unsubscribe) {
       this.unsubscribe();
     }
   }
+
+  private _onLangChanged = () => {
+    this.requestUpdate();
+  };
 
   private get paginatedEmployees() {
     const start = (this.currentPage - 1) * this.pageSize;
@@ -253,7 +259,7 @@ export class EmployeeRecords extends LitElement {
     return html`
       <div class="records-container">
         <div class="header">
-          <h2>Employee List</h2>
+          <h2>${translate('employeeList.title')}</h2>
           <div style="display: flex; gap: 16px; align-items: center;">
             <div class="toggle-view">
               <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
@@ -284,15 +290,15 @@ export class EmployeeRecords extends LitElement {
         <thead>
           <tr>
             <th class="checkbox-cell"><input type="checkbox" /></th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Date of Employment</th>
-            <th>Date of Birth</th>
-            <th>Phone</th>
-            <th>Email</th>
-            <th>Department</th>
-            <th>Position</th>
-            <th class="actions-cell">Actions</th>
+            <th>${translate('form.firstName')}</th>
+            <th>${translate('form.lastName')}</th>
+            <th>${translate('form.dateOfEmployment')}</th>
+            <th>${translate('form.dateOfBirth')}</th>
+            <th>${translate('form.phoneNumber')}</th>
+            <th>${translate('form.email')}</th>
+            <th>${translate('form.department')}</th>
+            <th>${translate('form.position')}</th>
+            <th class="actions-cell">${translate('employeeList.actions')}</th>
           </tr>
         </thead>
         <tbody>
@@ -332,14 +338,14 @@ export class EmployeeRecords extends LitElement {
         ${this.paginatedEmployees.map(employee => html`
           <div class="employee-card">
             <div class="card-details">
-              <div class="card-field"><span class="card-label">First Name:</span> ${employee.firstName}</div>
-              <div class="card-field"><span class="card-label">Last Name:</span> ${employee.lastName}</div>
-              <div class="card-field"><span class="card-label">Date of Employment:</span> ${new Date(employee.dateOfEmployment).toLocaleDateString()}</div>
-              <div class="card-field"><span class="card-label">Date of Birth:</span> ${new Date(employee.dateOfBirth).toLocaleDateString()}</div>
-              <div class="card-field"><span class="card-label">Phone:</span> ${employee.phoneNumber}</div>
-              <div class="card-field"><span class="card-label">Email:</span> ${employee.email}</div>
-              <div class="card-field"><span class="card-label">Department:</span> ${employee.department}</div>
-              <div class="card-field"><span class="card-label">Position:</span> ${employee.position}</div>
+              <div class="card-field"><span class="card-label">${translate('form.firstName')}:</span> ${employee.firstName}</div>
+              <div class="card-field"><span class="card-label">${translate('form.lastName')}:</span> ${employee.lastName}</div>
+              <div class="card-field"><span class="card-label">${translate('form.dateOfEmployment')}:</span> ${new Date(employee.dateOfEmployment).toLocaleDateString()}</div>
+              <div class="card-field"><span class="card-label">${translate('form.dateOfBirth')}:</span> ${new Date(employee.dateOfBirth).toLocaleDateString()}</div>
+              <div class="card-field"><span class="card-label">${translate('form.phoneNumber')}:</span> ${employee.phoneNumber}</div>
+              <div class="card-field"><span class="card-label">${translate('form.email')}:</span> ${employee.email}</div>
+              <div class="card-field"><span class="card-label">${translate('form.department')}:</span> ${employee.department}</div>
+              <div class="card-field"><span class="card-label">${translate('form.position')}:</span> ${employee.position}</div>
             </div>
             <div class="card-actions">
               <button class="action-btn" title="Edit" @click=${() => this.onEditEmployee(employee)}>
