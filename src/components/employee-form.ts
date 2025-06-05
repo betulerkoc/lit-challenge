@@ -51,10 +51,11 @@ export class EmployeeForm extends LitElement {
 
   override disconnectedCallback() {
     super.disconnectedCallback();
+    window.removeEventListener('lang-changed', this._onLangChanged);
     if (this.unsubscribe) {
       this.unsubscribe();
     }
-    window.removeEventListener('lang-changed', this._onLangChanged);
+    setEditingEmployee(null);
   }
 
   private _onLangChanged = () => {
