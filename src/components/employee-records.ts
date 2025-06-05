@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { store, setEditingEmployee, deleteEmployee } from './store/store';
-import { Employee } from './store/types';
+import { store, setEditingEmployee, deleteEmployee } from '../store/store';
+import { Employee } from '../store/types';
 import { Router } from '@vaadin/router';
-import { translate } from './i18n/i18n';
+import { translate } from '../i18n/i18n';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
@@ -23,7 +23,6 @@ export class EmployeeRecords extends LitElement {
     :host {
       display: block;
       padding: 16px;
-      background: #f6f6f6;
     }
     .records-container {
       background: #fff;

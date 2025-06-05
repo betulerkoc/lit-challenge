@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { Employee } from './store/types';
-import { store, addEmployee, updateEmployee, setEditingEmployee } from './store/store';
+import { Employee } from '../store/types';
+import { store, addEmployee, updateEmployee, setEditingEmployee } from '../store/store';
 import { Router } from '@vaadin/router';
-import { translate } from './i18n/i18n';
+import { translate } from '../i18n/i18n';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
@@ -57,7 +57,6 @@ export class EmployeeForm extends LitElement {
     :host {
       display: block;
       padding: 16px;
-      background: #f6f6f6;
     }
     .form-container {
       background: #fff;

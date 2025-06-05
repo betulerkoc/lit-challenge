@@ -1,7 +1,7 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import { Router } from '@vaadin/router';
-import { translate } from './i18n/i18n';
+import { translate } from '../i18n/i18n';
 import './language-switcher';
 
 @customElement('nav-menu')

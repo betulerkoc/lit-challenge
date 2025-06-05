@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './src/employee-records';
-import './src/employee-form';
-import './src/nav-menu';
+import './src/components/employee-records';
+import './src/components/employee-form';
+import './src/components/nav-menu';
 import { Router } from '@vaadin/router';
 
 @customElement('management-app')

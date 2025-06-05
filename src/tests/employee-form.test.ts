@@ -1,7 +1,7 @@
 import { fixture, html, expect } from '@open-wc/testing';
-import './employee-form';
-import { setEditingEmployee } from './store/store';
-import { EmployeeForm } from './employee-form';
+import '../components/employee-form';
+import { setEditingEmployee } from '../store/store';
+import { EmployeeForm } from '../components/employee-form';
 
 describe('<employee-form>', () => {
   beforeEach(() => {
