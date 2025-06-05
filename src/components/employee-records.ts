@@ -22,14 +22,14 @@ export class EmployeeRecords extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 16px;
+      padding: 1rem;
     }
     .records-container {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 16px;
-      max-width: 1200px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1rem;
+      max-width: 75rem;
       margin: 0 auto;
       width: 100%;
       box-sizing: border-box;
@@ -37,10 +37,10 @@ export class EmployeeRecords extends LitElement {
     .header {
       display: flex;
       flex-direction: column;
-      gap: 16px;
-      margin-bottom: 24px;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .header {
         flex-direction: row;
         justify-content: space-between;
@@ -49,24 +49,25 @@ export class EmployeeRecords extends LitElement {
     }
     h2 {
       margin: 0;
-      color: #ff6600;
-      font-size: 20px;
+      color: var(--primary-color);
+      font-size: 1.25rem;
+      font-weight: 700;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       h2 {
-        font-size: 24px;
+        font-size: 1.5rem;
       }
     }
     .toggle-view {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
     }
     .toggle-btn {
       background: none;
       border: none;
       cursor: pointer;
-      padding: 6px;
-      border-radius: 6px;
+      padding: 0.375rem;
+      border-radius: 0.375rem;
       transition: background 0.2s;
       display: flex;
       align-items: center;
@@ -75,15 +76,15 @@ export class EmployeeRecords extends LitElement {
       background: #ff6600;
     }
     .toggle-btn svg {
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
       fill: #ff6600;
       transition: fill 0.2s;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .toggle-btn svg {
-        width: 24px;
-        height: 24px;
+        width: 1.5rem;
+        height: 1.5rem;
       }
     }
     .toggle-btn.active svg, .toggle-btn:hover svg {
@@ -98,59 +99,60 @@ export class EmployeeRecords extends LitElement {
     }
     .employee-list th,
     .employee-list td {
-      padding: 12px 8px;
+      padding: 0.75rem 0.5rem;
       text-align: left;
       border-bottom: 1px solid #f0f0f0;
       white-space: nowrap;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .employee-list th,
       .employee-list td {
-        padding: 14px 10px;
+        padding: 0.875rem 0.625rem;
       }
     }
     .employee-list th {
-      color: #ff6600;
-      background: #fff;
-      font-size: 14px;
+      color: var(--primary-color);
+      background: var(--white);
+      font-weight: 600;
+      font-size: 0.875rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .employee-list th {
-        font-size: 15px;
+        font-size: 0.9375rem;
       }
     }
     .employee-list td {
       color: #222;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .employee-list td {
-        font-size: 15px;
+        font-size: 0.9375rem;
       }
     }
     .employee-list tr:hover {
       background-color: #f9f9f9;
     }
     .checkbox-cell {
-      width: 36px;
+      width: 2.25rem;
     }
     .actions-cell {
-      width: 80px;
+      width: 5rem;
       text-align: center;
     }
     .action-btn {
       background: none;
       border: none;
       cursor: pointer;
-      color: #ff6600;
-      font-size: 16px;
-      margin: 0 4px;
+      color: var(--primary-color);
+      font-size: 1rem;
+      margin: 0 0.25rem;
       transition: color 0.2s;
-      padding: 4px;
+      padding: 0.25rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .action-btn {
-        font-size: 18px;
+        font-size: 1.125rem;
       }
     }
     .action-btn:hover {
@@ -159,159 +161,159 @@ export class EmployeeRecords extends LitElement {
     .card-list {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 16px;
-      margin-top: 12px;
+      gap: 1rem;
+      margin-top: 0.75rem;
     }
-    @media (min-width: 480px) {
+    @media (min-width: 30rem) {
       .card-list {
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
       }
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .card-list {
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 24px;
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        gap: 1.5rem;
       }
     }
     .employee-card {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 1rem;
       background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
-      padding: 16px;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.08), 0 0.09375rem 0.25rem rgba(0,0,0,0.04);
+      padding: 1rem;
       border: 1px solid #f0f0f0;
       transition: box-shadow 0.2s, transform 0.2s;
       position: relative;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .employee-card {
         flex-direction: row;
         align-items: flex-start;
-        gap: 32px;
-        padding: 28px 32px;
-        border-radius: 16px;
+        gap: 2rem;
+        padding: 1.75rem 2rem;
+        border-radius: 1rem;
       }
     }
     .card-checkbox {
-      margin-right: 12px;
+      margin-right: 0.75rem;
     }
     .card-details {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 0.75rem;
     }
-    @media (min-width: 480px) {
+    @media (min-width: 30rem) {
       .card-details {
         grid-template-columns: repeat(2, 1fr);
       }
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .card-details {
         grid-template-columns: repeat(2, 1fr);
-        gap: 24px;
+        gap: 1.5rem;
       }
     }
     .card-field {
       min-width: 0;
       color: #222;
-      font-size: 14px;
+      font-size: 0.875rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .card-field {
-        font-size: 15px;
+        font-size: 0.9375rem;
       }
     }
     .card-label {
-      color: #ff6600;
-      margin-right: 4px;
+      color: var(--primary-color);
+      margin-right: 0.25rem;
     }
     .card-actions {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
       justify-content: flex-end;
     }
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 24px;
-      gap: 4px;
+      margin-top: 1.5rem;
+      gap: 0.25rem;
       flex-wrap: wrap;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .pagination {
-        gap: 8px;
+        gap: 0.5rem;
       }
     }
     .pagination-btn {
       background: none;
       border: none;
-      color: #ff6600;
-      font-size: 14px;
+      color: var(--primary-color);
+      font-size: 0.875rem;
       cursor: pointer;
-      padding: 4px 8px;
+      padding: 0.25rem 0.5rem;
       border-radius: 50%;
       transition: background 0.2s;
-      min-width: 32px;
-      height: 32px;
+      min-width: 2rem;
+      height: 2rem;
       display: flex;
       align-items: center;
       justify-content: center;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .pagination-btn {
-        font-size: 16px;
-        padding: 6px 12px;
-        min-width: 40px;
-        height: 40px;
+        font-size: 1rem;
+        padding: 0.375rem 0.75rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
       }
     }
     .pagination-btn.active, .pagination-btn:hover {
-      background: #ff6600;
-      color: #fff;
+      background: var(--primary-color);
+      color: var(--white);
     }
     .add-employee-btn {
-      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
-      color: white;
+      background: linear-gradient(90deg, var(--primary-color) 60%, #ff944d 100%);
+      color: var(--white);
       border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
-      font-size: 14px;
+      box-shadow: 0 0.125rem 0.5rem rgba(255,102,0,0.08);
+      font-size: 0.875rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .add-employee-btn {
-        padding: 10px 20px;
-        font-size: 16px;
+        padding: 0.625rem 1.25rem;
+        font-size: 1rem;
       }
     }
     .add-employee-btn:hover {
-      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
-      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
+      background: linear-gradient(90deg, #d35400 60%, var(--primary-color) 100%);
+      box-shadow: 0 0.25rem 1rem rgba(255,102,0,0.12);
     }
     .add-employee-btn svg {
-      width: 16px;
-      height: 16px;
+      width: 1rem;
+      height: 1rem;
       fill: currentColor;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .add-employee-btn svg {
-        width: 20px;
-        height: 20px;
+        width: 1.25rem;
+        height: 1.25rem;
       }
     }
     .form-container {
-      margin-top: 24px;
+      margin-top: 1.5rem;
       border-top: 1px solid #f0f0f0;
-      padding-top: 24px;
+      padding-top: 1.5rem;
     }
   `;
 

@@ -56,33 +56,34 @@ export class EmployeeForm extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 16px;
+      padding: 1rem;
     }
     .form-container {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 16px;
-      max-width: 800px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 1rem;
+      max-width: 50rem;
       margin: 0 auto;
       width: 100%;
       box-sizing: border-box;
     }
     h2 {
-      margin: 0 0 24px 0;
-      color: #ff6600;
-      font-size: 20px;
+      margin: 0 0 1.5rem 0;
+      color: var(--primary-color);
+      font-size: 1.25rem;
+      font-weight: 700;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       h2 {
-        font-size: 24px;
+        font-size: 1.5rem;
       }
     }
     form {
       display: grid;
-      gap: 16px;
+      gap: 1rem;
     }
-    @media (min-width: 480px) {
+    @media (min-width: 30rem) {
       form {
         grid-template-columns: repeat(2, 1fr);
       }
@@ -93,71 +94,70 @@ export class EmployeeForm extends LitElement {
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 0.25rem;
     }
     label {
-      color: #666;
-      font-size: 14px;
+      color: var(--gray);
+      font-size: 0.875rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       label {
-        font-size: 15px;
+        font-size: 0.9375rem;
       }
     }
     input, select {
-      padding: 8px 12px;
       border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 14px;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
       transition: border-color 0.2s;
+      padding: 0.5rem 0.75rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       input, select {
-        padding: 10px 14px;
-        font-size: 15px;
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.875rem;
       }
     }
     input:focus, select:focus {
-      outline: none;
-      border-color: #ff6600;
+      border-color: var(--primary-color);
     }
     .error-message {
       color: #dc3545;
-      font-size: 12px;
-      margin-top: 4px;
+      font-size: 0.75rem;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       .error-message {
-        font-size: 13px;
+        font-size: 0.8125rem;
       }
     }
     .form-actions {
       display: flex;
-      gap: 12px;
-      margin-top: 24px;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
       grid-column: 1 / -1;
     }
-    @media (min-width: 480px) {
+    @media (min-width: 30rem) {
       .form-actions {
         justify-content: flex-end;
       }
     }
     button {
-      padding: 8px 16px;
-      border-radius: 6px;
-      font-size: 14px;
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 48rem) {
       button {
-        padding: 10px 20px;
-        font-size: 15px;
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
       }
     }
     button[type="submit"] {
-      background: #ff6600;
-      color: white;
+      background: var(--primary-color);
+      color: var(--white);
       border: none;
     }
     button[type="submit"]:hover {

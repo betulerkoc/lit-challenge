@@ -10,8 +10,7 @@ export class App extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            color: var(--my-app-text-color, #000);
-               background: #f6f6f6;
+            padding: 16px;
         }
         .container {
             max-width: 1200px;
@@ -22,6 +21,21 @@ export class App extends LitElement {
         h1 {
             color: #333;
             margin-bottom: 30px;
+        }
+        .records-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: 700;
         }
     `;
 

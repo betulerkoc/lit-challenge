@@ -8,18 +8,17 @@ export class LanguageSwitcher extends LitElement {
       background: none;
       border: none;
       cursor: pointer;
-      margin-left: 8px;
       font-size: 1.2rem;
       padding: 0;
       outline: none;
     }
     .active {
-      border: 2px solid #ff6600;
+      border: 0.125rem solid var(--primary-color);
       border-radius: 50%;
     }
     svg {
-      width: 28px;
-      height: 20px;
+      width: 1.75rem;
+      height: 1.25rem;
       vertical-align: middle;
     }
   `;
