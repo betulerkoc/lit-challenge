@@ -18,9 +18,9 @@ A web app built with LitElement to manage employee records.
 
 ## ✅ Project Checklist
 
-- [ ] **List all employee records**
+- [X] **List all employee records**
   - [X] Display records in **list** and **table** formats
-  - [ ] Include **pagination** and **search**
+  - [X] Include **pagination** and **search**
   - [X] Support **Edit** and **Delete** actions per record
 
 - [X] **Add a new employee record**
