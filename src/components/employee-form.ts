@@ -58,6 +58,21 @@ export class EmployeeForm extends LitElement {
       display: block;
       padding: 1rem;
     }
+    .form-wrapper {
+      max-width: 50rem;
+      margin: 0 auto;
+    }
+    .form-title {
+      color: var(--primary-color);
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 48rem) {
+      .form-title {
+        font-size: 1.5rem;
+      }
+    }
     .form-container {
       background: var(--white);
       border-radius: var(--border-radius);
@@ -132,7 +147,6 @@ export class EmployeeForm extends LitElement {
     }
     .form-actions {
       display: flex;
-      gap: 0.75rem;
       margin-top: 1.5rem;
       grid-column: 1 / -1;
     }
@@ -171,6 +185,26 @@ export class EmployeeForm extends LitElement {
     button[type="button"]:hover {
       background: #f5f5f5;
       border-color: #ccc;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+    }
+    .btn:hover {
+      background: #d35400;
+    }
+    @media (min-width: 48rem) {
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+      }
     }
   `;
 
@@ -379,7 +413,9 @@ export class EmployeeForm extends LitElement {
             <option value="Senior">${translate('position.senior')}</option>
           </select>
 
-          <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
+          <div class="form-actions">
+            <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
+          </div>
         </form>
       </div>
     `;
