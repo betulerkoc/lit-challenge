@@ -11,11 +11,13 @@ export class App extends LitElement {
         :host {
             display: block;
             color: var(--my-app-text-color, #000);
+               background: #f6f6f6;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            background: #f6f6f6;
         }
         h1 {
             color: #333;

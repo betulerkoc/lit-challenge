@@ -54,79 +54,124 @@ export class EmployeeForm extends LitElement {
   };
 
   static override styles = css`
-    .form-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 32px;
-    }
-    .form-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      color: #ff6600;
-      margin-bottom: 18px;
-      letter-spacing: 0.5px;
+    :host {
+      display: block;
+      padding: 16px;
+      background: #f6f6f6;
     }
     .form-container {
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
-      padding: 36px 36px 28px 32px;
-      max-width: 420px;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      padding: 16px;
+      max-width: 800px;
+      margin: 0 auto;
       width: 100%;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin: 0 0 24px 0;
+      color: #ff6600;
+      font-size: 20px;
+    }
+    @media (min-width: 768px) {
+      h2 {
+        font-size: 24px;
+      }
+    }
+    form {
+      display: grid;
+      gap: 16px;
+    }
+    @media (min-width: 480px) {
+      form {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .full-width {
+        grid-column: 1 / -1;
+      }
+    }
+    .form-group {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      border: 1px solid #f0f0f0;
+      gap: 4px;
     }
     label {
-      font-weight: 600;
-      color: #ff6600;
-      margin-bottom: 4px;
-      font-size: 1rem;
+      color: #666;
+      font-size: 14px;
+    }
+    @media (min-width: 768px) {
+      label {
+        font-size: 15px;
+      }
     }
     input, select {
-      padding: 10px 12px;
-      font-size: 1rem;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      width: 100%;
-      background: #fafbfc;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    @media (min-width: 768px) {
+      input, select {
+        padding: 10px 14px;
+        font-size: 15px;
+      }
     }
     input:focus, select:focus {
+      outline: none;
       border-color: #ff6600;
-      box-shadow: 0 0 0 2px rgba(255,102,0,0.08);
-      background: #fff;
-    }
-    .btn {
-      padding: 12px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.08rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      transition: background 0.2s, box-shadow 0.2s;
-      margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
-    }
-    .btn:hover {
-      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
-      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
     }
     .error-message {
       color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: -6px;
-      margin-bottom: 8px;
+      font-size: 12px;
+      margin-top: 4px;
     }
-    input.error, select.error {
-      border-color: #dc3545;
+    @media (min-width: 768px) {
+      .error-message {
+        font-size: 13px;
+      }
+    }
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      grid-column: 1 / -1;
+    }
+    @media (min-width: 480px) {
+      .form-actions {
+        justify-content: flex-end;
+      }
+    }
+    button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    @media (min-width: 768px) {
+      button {
+        padding: 10px 20px;
+        font-size: 15px;
+      }
+    }
+    button[type="submit"] {
+      background: #ff6600;
+      color: white;
+      border: none;
+    }
+    button[type="submit"]:hover {
+      background: #d35400;
+    }
+    button[type="button"] {
+      background: none;
+      border: 1px solid #ddd;
+      color: #666;
+    }
+    button[type="button"]:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
     }
   `;
 

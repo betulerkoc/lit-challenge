@@ -22,28 +22,41 @@ export class EmployeeRecords extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 32px 0;
+      padding: 16px;
       background: #f6f6f6;
     }
     .records-container {
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 32px 24px;
+      padding: 16px;
       max-width: 1200px;
       margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
     }
     .header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      gap: 16px;
       margin-bottom: 24px;
+    }
+    @media (min-width: 768px) {
+      .header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+      }
     }
     h2 {
       margin: 0;
       color: #ff6600;
-      font-size: 24px;
-      font-weight: 700;
+      font-size: 20px;
+    }
+    @media (min-width: 768px) {
+      h2 {
+        font-size: 24px;
+      }
     }
     .toggle-view {
       display: flex;
@@ -63,10 +76,16 @@ export class EmployeeRecords extends LitElement {
       background: #ff6600;
     }
     .toggle-btn svg {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       fill: #ff6600;
       transition: fill 0.2s;
+    }
+    @media (min-width: 768px) {
+      .toggle-btn svg {
+        width: 24px;
+        height: 24px;
+      }
     }
     .toggle-btn.active svg, .toggle-btn:hover svg {
       fill: #fff;
@@ -74,22 +93,41 @@ export class EmployeeRecords extends LitElement {
     .employee-list {
       width: 100%;
       border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .employee-list th,
     .employee-list td {
-      padding: 14px 10px;
+      padding: 12px 8px;
       text-align: left;
       border-bottom: 1px solid #f0f0f0;
+      white-space: nowrap;
+    }
+    @media (min-width: 768px) {
+      .employee-list th,
+      .employee-list td {
+        padding: 14px 10px;
+      }
     }
     .employee-list th {
       color: #ff6600;
       background: #fff;
-      font-weight: 600;
-      font-size: 15px;
+      font-size: 14px;
+    }
+    @media (min-width: 768px) {
+      .employee-list th {
+        font-size: 15px;
+      }
     }
     .employee-list td {
       color: #222;
-      font-size: 15px;
+      font-size: 14px;
+    }
+    @media (min-width: 768px) {
+      .employee-list td {
+        font-size: 15px;
+      }
     }
     .employee-list tr:hover {
       background-color: #f9f9f9;
@@ -106,70 +144,131 @@ export class EmployeeRecords extends LitElement {
       border: none;
       cursor: pointer;
       color: #ff6600;
-      font-size: 18px;
+      font-size: 16px;
       margin: 0 4px;
       transition: color 0.2s;
+      padding: 4px;
+    }
+    @media (min-width: 768px) {
+      .action-btn {
+        font-size: 18px;
+      }
     }
     .action-btn:hover {
       color: #d35400;
     }
     .card-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1fr;
+      gap: 16px;
       margin-top: 12px;
+    }
+    @media (min-width: 480px) {
+      .card-list {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      }
+    }
+    @media (min-width: 768px) {
+      .card-list {
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 24px;
+      }
     }
     .employee-card {
       display: flex;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 16px;
       background: #fff;
-      border-radius: 16px;
+      border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
-      padding: 28px 32px;
-      gap: 32px;
+      padding: 16px;
       border: 1px solid #f0f0f0;
       transition: box-shadow 0.2s, transform 0.2s;
       position: relative;
+    }
+    @media (min-width: 768px) {
+      .employee-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 32px;
+        padding: 28px 32px;
+        border-radius: 16px;
+      }
     }
     .card-checkbox {
       margin-right: 12px;
     }
     .card-details {
       flex: 1;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 480px) {
+      .card-details {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (min-width: 768px) {
+      .card-details {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+      }
     }
     .card-field {
-      min-width: 160px;
+      min-width: 0;
       color: #222;
-      font-size: 15px;
+      font-size: 14px;
+    }
+    @media (min-width: 768px) {
+      .card-field {
+        font-size: 15px;
+      }
     }
     .card-label {
       color: #ff6600;
-      font-weight: 600;
       margin-right: 4px;
     }
     .card-actions {
       display: flex;
       gap: 8px;
+      justify-content: flex-end;
     }
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
       margin-top: 24px;
-      gap: 8px;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+    @media (min-width: 768px) {
+      .pagination {
+        gap: 8px;
+      }
     }
     .pagination-btn {
       background: none;
       border: none;
       color: #ff6600;
-      font-size: 16px;
+      font-size: 14px;
       cursor: pointer;
-      padding: 6px 12px;
+      padding: 4px 8px;
       border-radius: 50%;
       transition: background 0.2s;
+      min-width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (min-width: 768px) {
+      .pagination-btn {
+        font-size: 16px;
+        padding: 6px 12px;
+        min-width: 40px;
+        height: 40px;
+      }
     }
     .pagination-btn.active, .pagination-btn:hover {
       background: #ff6600;
@@ -179,24 +278,36 @@ export class EmployeeRecords extends LitElement {
       background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
       color: white;
       border: none;
-      padding: 10px 20px;
+      padding: 8px 16px;
       border-radius: 8px;
-      font-weight: 600;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
       transition: background 0.2s, box-shadow 0.2s;
       box-shadow: 0 2px 8px rgba(255,102,0,0.08);
+      font-size: 14px;
+    }
+    @media (min-width: 768px) {
+      .add-employee-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+      }
     }
     .add-employee-btn:hover {
       background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
       box-shadow: 0 4px 16px rgba(255,102,0,0.12);
     }
     .add-employee-btn svg {
-      width: 20px;
-      height: 20px;
+      width: 16px;
+      height: 16px;
       fill: currentColor;
+    }
+    @media (min-width: 768px) {
+      .add-employee-btn svg {
+        width: 20px;
+        height: 20px;
+      }
     }
     .form-container {
       margin-top: 24px;
