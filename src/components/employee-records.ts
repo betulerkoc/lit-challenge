@@ -4,6 +4,7 @@ import { store, setEditingEmployee, deleteEmployee } from '../store/store';
 import { Employee } from '../store/types';
 import { Router } from '@vaadin/router';
 import { translate } from '../i18n/i18n';
+import './app-modal';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
@@ -16,6 +17,9 @@ export class EmployeeRecords extends LitElement {
   @state()
   currentPage: number = 1;
   pageSize: number = 10;
+
+  @state() private confirmModalOpen = false;
+  @state() private employeeToDelete: Employee | null = null;
 
   private unsubscribe: (() => void) | null = null;
 
@@ -369,10 +373,26 @@ export class EmployeeRecords extends LitElement {
     Router.go('/form');
   }
 
-  private onDeleteEmployee(employee: Employee) {
-    if (confirm('Are you sure you want to delete this employee?')) {
-      deleteEmployee(employee.id);
+  private showDeleteModal(employee: Employee) {
+    this.employeeToDelete = employee;
+    this.confirmModalOpen = true;
+  }
+
+  private handleDeleteConfirm = () => {
+    if (this.employeeToDelete) {
+      deleteEmployee(this.employeeToDelete.id);
     }
+    this.confirmModalOpen = false;
+    this.employeeToDelete = null;
+  };
+
+  private handleDeleteCancel = () => {
+    this.confirmModalOpen = false;
+    this.employeeToDelete = null;
+  };
+
+  private onDeleteEmployee(employee: Employee) {
+    this.showDeleteModal(employee);
   }
 
   override render() {
@@ -400,6 +420,16 @@ export class EmployeeRecords extends LitElement {
           ${this.totalPages > 5 ? html`<span>...</span><button class="pagination-btn" @click=${() => this.goToPage(this.totalPages)}>${this.totalPages}</button>` : ''}
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage + 1)} ?disabled=${this.currentPage === this.totalPages}>&gt;</button>
         </div>
+        <app-modal
+          .open=${this.confirmModalOpen}
+          .title=${'Are you sure?'}
+          .message=${this.employeeToDelete ? `Selected Employee record of ${this.employeeToDelete.firstName} ${this.employeeToDelete.lastName} will be deleted` : ''}
+          .confirmText=${'Proceed'}
+          .cancelText=${'Cancel'}
+          @confirm=${this.handleDeleteConfirm}
+          @cancel=${this.handleDeleteCancel}
+          @close=${this.handleDeleteCancel}
+        ></app-modal>
       </div>
     `;
   }
