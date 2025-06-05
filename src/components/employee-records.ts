@@ -35,7 +35,7 @@ export class EmployeeRecords extends LitElement {
       background: var(--white);
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      padding: 0.5rem;
+      padding: 1.75rem 0.75rem;
       max-width: 75rem;
       margin: 0 auto;
       width: 100%;
