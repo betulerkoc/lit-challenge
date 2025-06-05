@@ -1,5 +1,5 @@
 import { fixture, html, expect } from '@open-wc/testing';
-import './nav-menu';
+import '../components/nav-menu';
 import { LitElement } from 'lit';
 
 describe('<nav-menu>', () => {

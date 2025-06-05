@@ -1,7 +1,7 @@
 import { fixture, html, expect } from '@open-wc/testing';
-import './employee-records';
-import { store, setEmployees } from './store/store';
-import { EmployeeRecords } from './employee-records';
+import '../components/employee-records';
+import { store, setEmployees } from '../store/store';
+import { EmployeeRecords } from '../components/employee-records';
 
 describe('<employee-records>', () => {
   beforeEach(() => {

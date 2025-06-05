@@ -1,5 +1,5 @@
 import { fixture, html, expect } from '@open-wc/testing';
-import './language-switcher';
+import '../components/language-switcher';
 
 describe('<language-switcher>', () => {
   beforeEach(() => {

@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { store, setEditingEmployee, deleteEmployee } from './store/store';
-import { Employee } from './store/types';
+import { store, setEditingEmployee, deleteEmployee } from '../store/store';
+import { Employee } from '../store/types';
 import { Router } from '@vaadin/router';
-import { translate } from './i18n/i18n';
+import { translate } from '../i18n/i18n';
 
 @customElement('employee-records')
 export class EmployeeRecords extends LitElement {
@@ -22,39 +22,59 @@ export class EmployeeRecords extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 32px 0;
-      background: #f6f6f6;
+  
     }
     .records-container {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      padding: 32px 24px;
-      max-width: 1200px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 0.5rem;
+      max-width: 75rem;
       margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
     }
     .header {
       display: flex;
+      flex-direction: row;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    @media (min-width: 48rem) {
+      :host {
+        padding: 1rem;
+      }
+      .records-container {
+        padding: 1rem;
+      }
+      .header {
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
     }
     h2 {
       margin: 0;
-      color: #ff6600;
-      font-size: 24px;
+      color: var(--primary-color);
+      font-size: 1.25rem;
       font-weight: 700;
+    }
+    @media (min-width: 48rem) {
+      h2 {
+        font-size: 1.5rem;
+      }
     }
     .toggle-view {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
     }
     .toggle-btn {
       background: none;
       border: none;
       cursor: pointer;
-      padding: 6px;
-      border-radius: 6px;
+      padding: 0.375rem;
+      border-radius: 0.375rem;
       transition: background 0.2s;
       display: flex;
       align-items: center;
@@ -63,10 +83,16 @@ export class EmployeeRecords extends LitElement {
       background: #ff6600;
     }
     .toggle-btn svg {
-      width: 24px;
-      height: 24px;
+      width: 1.25rem;
+      height: 1.25rem;
       fill: #ff6600;
       transition: fill 0.2s;
+    }
+    @media (min-width: 48rem) {
+      .toggle-btn svg {
+        width: 1.5rem;
+        height: 1.5rem;
+      }
     }
     .toggle-btn.active svg, .toggle-btn:hover svg {
       fill: #fff;
@@ -74,134 +100,227 @@ export class EmployeeRecords extends LitElement {
     .employee-list {
       width: 100%;
       border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
     .employee-list th,
     .employee-list td {
-      padding: 14px 10px;
+      padding: 0.75rem 0.5rem;
       text-align: left;
       border-bottom: 1px solid #f0f0f0;
+      white-space: nowrap;
+    }
+    @media (min-width: 48rem) {
+      .employee-list th,
+      .employee-list td {
+        padding: 0.875rem 0.625rem;
+      }
     }
     .employee-list th {
-      color: #ff6600;
-      background: #fff;
+      color: var(--primary-color);
+      background: var(--white);
       font-weight: 600;
-      font-size: 15px;
+      font-size: 0.875rem;
+    }
+    @media (min-width: 48rem) {
+      .employee-list th {
+        font-size: 0.9375rem;
+      }
     }
     .employee-list td {
       color: #222;
-      font-size: 15px;
+      font-size: 0.875rem;
+    }
+    @media (min-width: 48rem) {
+      .employee-list td {
+        font-size: 0.9375rem;
+      }
     }
     .employee-list tr:hover {
       background-color: #f9f9f9;
     }
     .checkbox-cell {
-      width: 36px;
+      width: 2.25rem;
     }
     .actions-cell {
-      width: 80px;
+      width: 5rem;
       text-align: center;
     }
     .action-btn {
       background: none;
       border: none;
       cursor: pointer;
-      color: #ff6600;
-      font-size: 18px;
-      margin: 0 4px;
+      color: var(--primary-color);
+      font-size: 1rem;
+      margin: 0 0.25rem;
       transition: color 0.2s;
+      padding: 0.25rem;
+    }
+    @media (min-width: 48rem) {
+      .action-btn {
+        font-size: 1.125rem;
+      }
     }
     .action-btn:hover {
       color: #d35400;
     }
     .card-list {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 24px;
-      margin-top: 12px;
+      grid-template-columns: 1fr;
+      gap: 1rem;
+      margin-top: 0.75rem;
+    }
+    @media (min-width: 30rem) {
+      .card-list {
+        grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+      }
+    }
+    @media (min-width: 48rem) {
+      .card-list {
+        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        gap: 1.5rem;
+      }
     }
     .employee-card {
       display: flex;
-      align-items: flex-start;
+      flex-direction: column;
+      gap: 1rem;
       background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
-      padding: 28px 32px;
-      gap: 32px;
+      border-radius: 0.75rem;
+      box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.08), 0 0.09375rem 0.25rem rgba(0,0,0,0.04);
+      padding: 1rem;
       border: 1px solid #f0f0f0;
       transition: box-shadow 0.2s, transform 0.2s;
       position: relative;
     }
+    @media (min-width: 48rem) {
+      .employee-card {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 2rem;
+        padding: 1.75rem 2rem;
+        border-radius: 1rem;
+      }
+    }
     .card-checkbox {
-      margin-right: 12px;
+      margin-right: 0.75rem;
     }
     .card-details {
       flex: 1;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 24px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+    @media (min-width: 30rem) {
+      .card-details {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (min-width: 48rem) {
+      .card-details {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+      }
     }
     .card-field {
-      min-width: 160px;
+      min-width: 0;
       color: #222;
-      font-size: 15px;
+      font-size: 0.875rem;
+    }
+    @media (min-width: 48rem) {
+      .card-field {
+        font-size: 0.9375rem;
+      }
     }
     .card-label {
-      color: #ff6600;
-      font-weight: 600;
-      margin-right: 4px;
+      color: var(--primary-color);
+      margin-right: 0.25rem;
     }
     .card-actions {
       display: flex;
-      gap: 8px;
+      gap: 0.5rem;
+      justify-content: flex-end;
     }
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      margin-top: 24px;
-      gap: 8px;
+      margin-top: 1.5rem;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    @media (min-width: 48rem) {
+      .pagination {
+        gap: 0.5rem;
+      }
     }
     .pagination-btn {
       background: none;
       border: none;
-      color: #ff6600;
-      font-size: 16px;
+      color: var(--primary-color);
+      font-size: 0.875rem;
       cursor: pointer;
-      padding: 6px 12px;
+      padding: 0.25rem 0.5rem;
       border-radius: 50%;
       transition: background 0.2s;
+      min-width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    @media (min-width: 48rem) {
+      .pagination-btn {
+        font-size: 1rem;
+        padding: 0.375rem 0.75rem;
+        min-width: 2.5rem;
+        height: 2.5rem;
+      }
     }
     .pagination-btn.active, .pagination-btn:hover {
-      background: #ff6600;
-      color: #fff;
+      background: var(--primary-color);
+      color: var(--white);
     }
     .add-employee-btn {
-      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
-      color: white;
+      background: linear-gradient(90deg, var(--primary-color) 60%, #ff944d 100%);
+      color: var(--white);
       border: none;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.5rem;
       transition: background 0.2s, box-shadow 0.2s;
-      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
+      box-shadow: 0 0.125rem 0.5rem rgba(255,102,0,0.08);
+      font-size: 0.875rem;
+    }
+    @media (min-width: 48rem) {
+      .add-employee-btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 1rem;
+      }
     }
     .add-employee-btn:hover {
-      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
-      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
+      background: linear-gradient(90deg, #d35400 60%, var(--primary-color) 100%);
+      box-shadow: 0 0.25rem 1rem rgba(255,102,0,0.12);
     }
     .add-employee-btn svg {
-      width: 20px;
-      height: 20px;
+      width: 1rem;
+      height: 1rem;
       fill: currentColor;
     }
+    @media (min-width: 48rem) {
+      .add-employee-btn svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
     .form-container {
-      margin-top: 24px;
+      margin-top: 1.5rem;
       border-top: 1px solid #f0f0f0;
-      padding-top: 24px;
+      padding-top: 1.5rem;
     }
   `;
 
@@ -258,20 +377,20 @@ export class EmployeeRecords extends LitElement {
 
   override render() {
     return html`
-      <div class="records-container">
-        <div class="header">
-          <h2>${translate('employeeList.title')}</h2>
-          <div style="display: flex; gap: 16px; align-items: center;">
-            <div class="toggle-view">
-              <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              </button>
-              <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
-                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
-              </button>
-            </div>
+      <div class="header">
+        <h2>${translate('employeeList.title')}</h2>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="toggle-view">
+            <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
+            </button>
           </div>
         </div>
+      </div>
+      <div class="records-container">
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
         <div class="pagination">
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>

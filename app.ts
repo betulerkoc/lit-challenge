@@ -1,8 +1,8 @@
 import { LitElement, html, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './src/employee-records';
-import './src/employee-form';
-import './src/nav-menu';
+import './src/components/employee-records';
+import './src/components/employee-form';
+import './src/components/nav-menu';
 import { Router } from '@vaadin/router';
 
 @customElement('management-app')
@@ -10,16 +10,33 @@ export class App extends LitElement {
     static override styles = css`
         :host {
             display: block;
-            color: var(--my-app-text-color, #000);
+            padding: 16px;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
+            background: #f6f6f6;
+            margin-top: 2.5rem;
         }
         h1 {
             color: #333;
             margin-bottom: 30px;
+        }
+        .records-container {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        h2 {
+            color: var(--primary-color);
+            font-size: 20px;
+            font-weight: 700;
         }
     `;
 

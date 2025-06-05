@@ -1,9 +1,9 @@
 import { LitElement, html, css } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
-import { Employee } from './store/types';
-import { store, addEmployee, updateEmployee, setEditingEmployee } from './store/store';
+import { Employee } from '../store/types';
+import { store, addEmployee, updateEmployee, setEditingEmployee } from '../store/store';
 import { Router } from '@vaadin/router';
-import { translate } from './i18n/i18n';
+import { translate } from '../i18n/i18n';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
@@ -54,79 +54,158 @@ export class EmployeeForm extends LitElement {
   };
 
   static override styles = css`
+    :host {
+      display: block;
+      padding: 0.5rem;
+    }
     .form-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      margin-top: 32px;
+      max-width: 50rem;
+      margin: 0 auto;
     }
     .form-title {
-      font-size: 1.4rem;
+      color: var(--primary-color);
+      font-size: 1.25rem;
       font-weight: 700;
-      color: #ff6600;
-      margin-bottom: 18px;
-      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 48rem) {
+      .form-title {
+        font-size: 1.5rem;
+      }
     }
     .form-container {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1.5px 4px rgba(0,0,0,0.04);
-      padding: 36px 36px 28px 32px;
-      max-width: 420px;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 0.5rem;
+      max-width: 50rem;
+      margin: 0 auto;
       width: 100%;
+      box-sizing: border-box;
+    }
+    h2 {
+      margin: 0 0 1.5rem 0;
+      color: var(--primary-color);
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    @media (min-width: 48rem) {
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+    form {
+      display: grid;
+      gap: 1rem;
+    }
+    @media (min-width: 30rem) {
+      form {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .full-width {
+        grid-column: 1 / -1;
+      }
+    }
+    .form-group {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      border: 1px solid #f0f0f0;
+      gap: 0.25rem;
     }
     label {
-      font-weight: 600;
-      color: #ff6600;
-      margin-bottom: 4px;
-      font-size: 1rem;
+      color: var(--gray);
+      font-size: 0.875rem;
+    }
+    @media (min-width: 48rem) {
+      label {
+        font-size: 0.9375rem;
+      }
     }
     input, select {
-      padding: 10px 12px;
-      font-size: 1rem;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      width: 100%;
-      background: #fafbfc;
-      transition: border-color 0.2s, box-shadow 0.2s;
-      outline: none;
+      border: 1px solid #ddd;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+      padding: 0.5rem 0.75rem;
+    }
+    @media (min-width: 48rem) {
+      input, select {
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.875rem;
+      }
     }
     input:focus, select:focus {
-      border-color: #ff6600;
-      box-shadow: 0 0 0 2px rgba(255,102,0,0.08);
-      background: #fff;
-    }
-    .btn {
-      padding: 12px 0;
-      border: none;
-      border-radius: 8px;
-      font-size: 1.08rem;
-      cursor: pointer;
-      background: linear-gradient(90deg, #ff6600 60%, #ff944d 100%);
-      color: #fff;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      transition: background 0.2s, box-shadow 0.2s;
-      margin-top: 10px;
-      box-shadow: 0 2px 8px rgba(255,102,0,0.08);
-    }
-    .btn:hover {
-      background: linear-gradient(90deg, #d35400 60%, #ff6600 100%);
-      box-shadow: 0 4px 16px rgba(255,102,0,0.12);
+      border-color: var(--primary-color);
     }
     .error-message {
       color: #dc3545;
-      font-size: 0.875rem;
-      margin-top: -6px;
-      margin-bottom: 8px;
+      font-size: 0.75rem;
     }
-    input.error, select.error {
-      border-color: #dc3545;
+    @media (min-width: 48rem) {
+      .error-message {
+        font-size: 0.8125rem;
+      }
+    }
+    .form-actions {
+      display: flex;
+      justify-content: center;
+      margin-top: 1.5rem;
+      grid-column: 1 / -1;
+    }
+    @media (min-width: 30rem) {
+      .form-actions {
+        justify-content: flex-end;
+      }
+    }
+    button {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    @media (min-width: 48rem) {
+      button {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+      }
+    }
+    button[type="submit"] {
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+    }
+    button[type="submit"]:hover {
+      background: #d35400;
+    }
+    button[type="button"] {
+      background: none;
+      border: 1px solid #ddd;
+      color: #666;
+    }
+    button[type="button"]:hover {
+      background: #f5f5f5;
+      border-color: #ccc;
+    }
+    .btn {
+      padding: 0.5rem 1rem;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--primary-color);
+      color: var(--white);
+      border: none;
+    }
+    .btn:hover {
+      background: #d35400;
+    }
+    @media (min-width: 48rem) {
+      .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9375rem;
+      }
     }
   `;
 
@@ -335,7 +414,9 @@ export class EmployeeForm extends LitElement {
             <option value="Senior">${translate('position.senior')}</option>
           </select>
 
-          <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
+          <div class="form-actions">
+            <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
+          </div>
         </form>
       </div>
     `;
