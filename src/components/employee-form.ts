@@ -232,6 +232,7 @@ export class EmployeeForm extends LitElement {
 
   private validateForm(): boolean {
     const errors: { [key: string]: string } = {};
+    const currentState = store.getState();
   
     if (!this.firstName.trim()) {
       errors.firstName = translate('validation.firstName.required');
@@ -281,6 +282,14 @@ export class EmployeeForm extends LitElement {
       errors.email = translate('validation.email.required');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
       errors.email = translate('validation.email.format');
+    } else {
+      const existingEmployee = currentState.employees.find(emp => 
+        emp.email.toLowerCase() === this.email.toLowerCase() && 
+        (!this.isEditMode || emp.id !== currentState.editingEmployee?.id)
+      );
+      if (existingEmployee) {
+        errors.email = translate('validation.email.unique');
+      }
     }
 
     this.errors = errors;
