@@ -88,9 +88,12 @@ describe('<employee-records>', () => {
     const el = await fixture<EmployeeRecords>(html`<employee-records></employee-records>`);
     await new Promise(resolve => setTimeout(resolve, 0));
     await el.updateComplete;
-    window.confirm = () => true;
     const deleteButton = el.shadowRoot!.querySelector('button[title="Delete"]') as HTMLButtonElement;
     deleteButton.click();
+    await el.updateComplete;
+    const modal = el.shadowRoot!.querySelector('app-modal')!;
+    await new Promise(resolve => setTimeout(resolve, 0));
+    (modal.shadowRoot!.querySelector('.confirm-btn') as HTMLButtonElement).click();
     await el.updateComplete;
     expect(store.getState().employees.length).to.equal(0);
   });
