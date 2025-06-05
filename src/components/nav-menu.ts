@@ -34,6 +34,9 @@ export class NavMenu extends LitElement {
       padding: 0 2rem;
       width: 100%;
       box-sizing: border-box;
+      position: fixed;
+      top: 0;
+      left: 0;
     }
     .logo-text {
       color: var(--black);
@@ -45,6 +48,7 @@ export class NavMenu extends LitElement {
       display: flex;
       align-items: center;
       gap: 1.5rem;
+      white-space: nowrap;
     }
     .nav-link {
       color: var(--primary-color);
@@ -59,6 +63,7 @@ export class NavMenu extends LitElement {
       text-decoration: none;
       cursor: pointer;
       height: 2.5rem;
+      white-space: nowrap;
     }
     .nav-link.active, .nav-link:hover {
       color: var(--primary-color);
@@ -82,12 +87,17 @@ export class NavMenu extends LitElement {
         padding: 0 0.5rem;
       }
       .nav-actions {
-        gap: 0.5rem;
+        gap: 0.25rem;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        min-width: 0;
       }
-      .logo {
-        font-size: 1rem;
+      .logo-text {
+        font-size: 0.95rem;
+      }
+      .nav-link {
+        font-size: 0.85rem;
+        padding: 0 0.4rem;
       }
     }
   `;

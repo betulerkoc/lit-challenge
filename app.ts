@@ -15,8 +15,9 @@ export class App extends LitElement {
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem;
             background: #f6f6f6;
+            margin-top: 2.5rem;
         }
         h1 {
             color: #333;

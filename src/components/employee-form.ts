@@ -56,7 +56,7 @@ export class EmployeeForm extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 1rem;
+      padding: 0.5rem;
     }
     .form-wrapper {
       max-width: 50rem;
@@ -77,7 +77,7 @@ export class EmployeeForm extends LitElement {
       background: var(--white);
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      padding: 1rem;
+      padding: 0.5rem;
       max-width: 50rem;
       margin: 0 auto;
       width: 100%;
@@ -147,6 +147,7 @@ export class EmployeeForm extends LitElement {
     }
     .form-actions {
       display: flex;
+      justify-content: center;
       margin-top: 1.5rem;
       grid-column: 1 / -1;
     }

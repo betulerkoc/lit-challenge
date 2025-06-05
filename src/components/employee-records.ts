@@ -22,13 +22,13 @@ export class EmployeeRecords extends LitElement {
   static override styles = css`
     :host {
       display: block;
-      padding: 1rem;
+  
     }
     .records-container {
       background: var(--white);
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      padding: 1rem;
+      padding: 0.5rem;
       max-width: 75rem;
       margin: 0 auto;
       width: 100%;
@@ -36,15 +36,22 @@ export class EmployeeRecords extends LitElement {
     }
     .header {
       display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
     }
     @media (min-width: 48rem) {
+      :host {
+        padding: 1rem;
+      }
+      .records-container {
+        padding: 1rem;
+      }
       .header {
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
       }
     }
     h2 {
@@ -370,20 +377,20 @@ export class EmployeeRecords extends LitElement {
 
   override render() {
     return html`
-      <div class="records-container">
-        <div class="header">
-          <h2>${translate('employeeList.title')}</h2>
-          <div style="display: flex; gap: 16px; align-items: center;">
-            <div class="toggle-view">
-              <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-              </button>
-              <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
-                <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
-              </button>
-            </div>
+      <div class="header">
+        <h2>${translate('employeeList.title')}</h2>
+        <div style="display: flex; gap: 16px; align-items: center;">
+          <div class="toggle-view">
+            <button class="toggle-btn ${this.viewMode === 'table' ? 'active' : ''}" @click=${() => this.setViewMode('table')} title="Table view">
+              <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            </button>
+            <button class="toggle-btn ${this.viewMode === 'list' ? 'active' : ''}" @click=${() => this.setViewMode('list')} title="List view">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="3"/><rect x="4" y="10.5" width="16" height="3"/><rect x="4" y="16" width="16" height="3"/></svg>
+            </button>
           </div>
         </div>
+      </div>
+      <div class="records-container">
         ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
         <div class="pagination">
           <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>
