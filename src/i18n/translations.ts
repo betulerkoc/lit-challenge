@@ -167,5 +167,13 @@ export const translations: Translations = {
   'employeeList.actions': {
     en: 'Actions',
     tr: 'İşlemler'
+  },
+  'employeeList.searchPlaceholder': {
+    en: 'Search by name, email, department or position...',
+    tr: 'İsim, e-posta, departman veya pozisyona göre ara...'
+  },
+  'employeeList.noResults': {
+    en: 'No employees found matching your search criteria',
+    tr: 'Arama kriterlerinize uygun çalışan bulunamadı'
   }
 }; 

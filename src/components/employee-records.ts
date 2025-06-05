@@ -12,6 +12,9 @@ export class EmployeeRecords extends LitElement {
   private employees: Employee[] = [];
 
   @state()
+  private searchQuery = '';
+
+  @state()
   viewMode: 'table' | 'list' = 'table';
 
   @state()
@@ -46,6 +49,27 @@ export class EmployeeRecords extends LitElement {
       gap: 0.5rem;
       margin-bottom: 1rem;
     }
+    .search-container {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .search-input {
+      flex: 1;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 0.375rem;
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+    .search-input::placeholder {
+      color: #999;
+    }
     @media (min-width: 48rem) {
       :host {
         padding: 1rem;
@@ -56,6 +80,13 @@ export class EmployeeRecords extends LitElement {
       .header {
         gap: 1rem;
         margin-bottom: 1.5rem;
+      }
+      .search-container {
+        margin-bottom: 1.5rem;
+      }
+      .search-input {
+        font-size: 0.9375rem;
+        padding: 0.625rem 0.875rem;
       }
     }
     h2 {
@@ -352,6 +383,23 @@ export class EmployeeRecords extends LitElement {
       border-top: 1px solid #f0f0f0;
       padding-top: 1.5rem;
     }
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin: 1rem 0;
+      color: #666;
+      font-size: 1rem;
+      border: 1px dashed #ddd;
+    }
+    @media (min-width: 48rem) {
+      .no-results {
+        padding: 3rem;
+        font-size: 1.125rem;
+      }
+    }
   `;
 
   override connectedCallback() {
@@ -375,13 +423,32 @@ export class EmployeeRecords extends LitElement {
     this.requestUpdate();
   };
 
-  private get paginatedEmployees() {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.employees.slice(start, start + this.pageSize);
+  private get filteredEmployees(): Employee[] {
+    if (!this.searchQuery.trim()) {
+      return this.employees;
+    }
+    const query = this.searchQuery.toLowerCase().trim();
+    return this.employees.filter(employee => 
+      employee.firstName.toLowerCase().includes(query) ||
+      employee.lastName.toLowerCase().includes(query) ||
+      employee.email.toLowerCase().includes(query) ||
+      employee.department.toLowerCase().includes(query) ||
+      employee.position.toLowerCase().includes(query)
+    );
   }
 
-  private get totalPages() {
-    return Math.ceil(this.employees.length / this.pageSize);
+  private get paginatedEmployees(): Employee[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredEmployees.slice(start, start + this.pageSize);
+  }
+
+  private get totalPages(): number {
+    return Math.ceil(this.filteredEmployees.length / this.pageSize);
+  }
+
+  private onSearch(e: Event) {
+    this.searchQuery = (e.target as HTMLInputElement).value;
+    this.currentPage = 1; // Reset to first page when searching
   }
 
   setViewMode(mode: 'table' | 'list') {
@@ -437,15 +504,31 @@ export class EmployeeRecords extends LitElement {
         </div>
       </div>
       <div class="records-container">
-        ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
-        <div class="pagination">
-          <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>
-          ${Array.from({ length: this.totalPages }, (_, i) => i + 1).slice(0, 5).map(page => html`
-            <button class="pagination-btn ${this.currentPage === page ? 'active' : ''}" @click=${() => this.goToPage(page)}>${page}</button>
-          `)}
-          ${this.totalPages > 5 ? html`<span>...</span><button class="pagination-btn" @click=${() => this.goToPage(this.totalPages)}>${this.totalPages}</button>` : ''}
-          <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage + 1)} ?disabled=${this.currentPage === this.totalPages}>&gt;</button>
+        <div class="search-container">
+          <input
+            type="text"
+            class="search-input"
+            placeholder=${translate('employeeList.searchPlaceholder')}
+            .value=${this.searchQuery}
+            @input=${this.onSearch}
+          />
         </div>
+        ${this.viewMode === 'table' ? this.renderTableView() : this.renderListView()}
+        ${this.filteredEmployees.length === 0 ? html`
+          <div class="no-results">
+            ${translate('employeeList.noResults')}
+          </div>
+        ` : ''}
+        ${this.totalPages > 0 ? html`
+          <div class="pagination">
+            <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage - 1)} ?disabled=${this.currentPage === 1}>&lt;</button>
+            ${Array.from({ length: this.totalPages }, (_, i) => i + 1).slice(0, 5).map(page => html`
+              <button class="pagination-btn ${this.currentPage === page ? 'active' : ''}" @click=${() => this.goToPage(page)}>${page}</button>
+            `)}
+            ${this.totalPages > 5 ? html`<span>...</span><button class="pagination-btn" @click=${() => this.goToPage(this.totalPages)}>${this.totalPages}</button>` : ''}
+            <button class="pagination-btn" @click=${() => this.goToPage(this.currentPage + 1)} ?disabled=${this.currentPage === this.totalPages}>&gt;</button>
+          </div>
+        ` : ''}
         <app-modal
           .open=${this.confirmModalOpen}
           .title=${'Are you sure?'}
