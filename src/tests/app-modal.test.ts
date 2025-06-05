@@ -1,5 +1,5 @@
 import { fixture, html, expect, oneEvent } from '@open-wc/testing';
-import './app-modal';
+import '../components/app-modal';
 
 describe('<app-modal>', () => {
   it('renders with title, message, and buttons', async () => {

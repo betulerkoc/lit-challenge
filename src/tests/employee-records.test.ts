@@ -6,6 +6,7 @@ import { EmployeeRecords } from '../components/employee-records';
 describe('<employee-records>', () => {
   beforeEach(() => {
     setEmployees([]);
+    window.removeEventListener('lang-changed', () => {});
   });
 
   it('renders employee list', async () => {
@@ -13,7 +14,7 @@ describe('<employee-records>', () => {
     expect(el.shadowRoot!.textContent).to.include('Employee List');
   });
 
-  it('displays employees in table view', async () => {
+  it('displays employees in both table and list views', async () => {
     const employees = [
       { id: '1', firstName: 'Betty', lastName: 'Bet', email: 'betty@example.com', phoneNumber: '+1234567890', department: 'Tech', position: 'Senior', dateOfEmployment: '2020-01-01', dateOfBirth: '1990-01-01' },
       { id: '2', firstName: 'Rose', lastName: 'Erk', email: 'rose@example.com', phoneNumber: '+0987654321', department: 'Analytics', position: 'Junior', dateOfEmployment: '2021-01-01', dateOfBirth: '1995-01-01' }
@@ -22,20 +23,12 @@ describe('<employee-records>', () => {
     const el = await fixture<EmployeeRecords>(html`<employee-records></employee-records>`);
     await new Promise(resolve => setTimeout(resolve, 0));
     await el.updateComplete;
+
     const table = el.shadowRoot!.querySelector('table');
     expect(table).to.exist;
     expect(table!.textContent).to.include('Betty');
     expect(table!.textContent).to.include('Rose');
-  });
 
-  it('displays employees in list view', async () => {
-    const employees = [
-      { id: '1', firstName: 'Betty', lastName: 'Bet', email: 'betty@example.com', phoneNumber: '+1234567890', department: 'Tech', position: 'Senior', dateOfEmployment: '2020-01-01', dateOfBirth: '1990-01-01' },
-      { id: '2', firstName: 'Rose', lastName: 'Erk', email: 'rose@example.com', phoneNumber: '+0987654321', department: 'Analytics', position: 'Junior', dateOfEmployment: '2021-01-01', dateOfBirth: '1995-01-01' }
-    ];
-    setEmployees(employees);
-    const el = await fixture<EmployeeRecords>(html`<employee-records></employee-records>`);
-    await new Promise(resolve => setTimeout(resolve, 0));
     el.setViewMode('list');
     await el.updateComplete;
     const list = el.shadowRoot!.querySelector('.card-list');

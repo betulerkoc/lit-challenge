@@ -65,6 +65,6 @@ A web app built with LitElement to manage employee records.
 - [X] **Localization**
   - [X] Support **English** and **Turkish**
 
-- [ ] **Testing**
+- [X] **Testing**
   - [X] Add unit tests for all components and logic
-  - [ ] Ensure at least **85% test coverage**
+  - [X] Ensure at least **85% test coverage**

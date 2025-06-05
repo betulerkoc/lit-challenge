@@ -85,7 +85,7 @@ export class EmployeeForm extends LitElement {
       background: var(--white);
       border-radius: var(--border-radius);
       box-shadow: var(--box-shadow);
-      padding: 0.5rem;
+      padding: 1.5rem;
       max-width: 50rem;
       margin: 0 auto;
       width: 100%;
@@ -269,8 +269,11 @@ export class EmployeeForm extends LitElement {
 
     if (!this.phoneNumber) {
       errors.phoneNumber = translate('validation.phoneNumber.required');
-    } else if (!/^\+?[\d\s-]{10,15}$/.test(this.phoneNumber)) {
-      errors.phoneNumber = translate('validation.phoneNumber.format');
+    } else {
+      const digits = this.phoneNumber.replace(/\D/g, '');
+      if (digits.length < 11 || digits.length > 15) {
+        errors.phoneNumber = translate('validation.phoneNumber.format');
+      }
     }
 
     if (!this.email) {
@@ -362,86 +365,104 @@ export class EmployeeForm extends LitElement {
           ${this.isEditMode ? translate('form.title.edit') : translate('form.title.add')}
         </div>
         <form class="form-container" @submit=${this.onSubmit}>
-          <label>${translate('form.firstName')}</label>
-          <input 
-            type="text" 
-            .value=${this.firstName} 
-            @input=${(e: Event) => this.onInput(e, 'firstName')} 
-            class=${this.errors.firstName ? 'error' : ''}
-            required 
-          />
-          ${this.errors.firstName ? html`<div class="error-message">${this.errors.firstName}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.firstName')}</label>
+            <input 
+              type="text" 
+              .value=${this.firstName} 
+              @input=${(e: Event) => this.onInput(e, 'firstName')} 
+              class=${this.errors.firstName ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.firstName || ''}</div>
+          </div>
 
-          <label>${translate('form.lastName')}</label>
-          <input 
-            type="text" 
-            .value=${this.lastName} 
-            @input=${(e: Event) => this.onInput(e, 'lastName')} 
-            class=${this.errors.lastName ? 'error' : ''}
-            required 
-          />
-          ${this.errors.lastName ? html`<div class="error-message">${this.errors.lastName}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.lastName')}</label>
+            <input 
+              type="text" 
+              .value=${this.lastName} 
+              @input=${(e: Event) => this.onInput(e, 'lastName')} 
+              class=${this.errors.lastName ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.lastName || ''}</div>
+          </div>
 
-          <label>${translate('form.dateOfEmployment')}</label>
-          <input 
-            type="date" 
-            .value=${this.dateOfEmployment} 
-            @input=${(e: Event) => this.onInput(e, 'dateOfEmployment')} 
-            class=${this.errors.dateOfEmployment ? 'error' : ''}
-            required 
-          />
-          ${this.errors.dateOfEmployment ? html`<div class="error-message">${this.errors.dateOfEmployment}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.dateOfEmployment')}</label>
+            <input 
+              type="date" 
+              .value=${this.dateOfEmployment} 
+              @input=${(e: Event) => this.onInput(e, 'dateOfEmployment')} 
+              class=${this.errors.dateOfEmployment ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.dateOfEmployment || ''}</div>
+          </div>
 
-          <label>${translate('form.dateOfBirth')}</label>
-          <input 
-            type="date" 
-            .value=${this.dateOfBirth} 
-            @input=${(e: Event) => this.onInput(e, 'dateOfBirth')} 
-            class=${this.errors.dateOfBirth ? 'error' : ''}
-            required 
-          />
-          ${this.errors.dateOfBirth ? html`<div class="error-message">${this.errors.dateOfBirth}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.dateOfBirth')}</label>
+            <input 
+              type="date" 
+              .value=${this.dateOfBirth} 
+              @input=${(e: Event) => this.onInput(e, 'dateOfBirth')} 
+              class=${this.errors.dateOfBirth ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.dateOfBirth || ''}</div>
+          </div>
 
-          <label>${translate('form.phoneNumber')}</label>
-          <input 
-            type="tel" 
-            .value=${this.phoneNumber} 
-            @input=${(e: Event) => this.onInput(e, 'phoneNumber')} 
-            class=${this.errors.phoneNumber ? 'error' : ''}
-            required 
-          />
-          ${this.errors.phoneNumber ? html`<div class="error-message">${this.errors.phoneNumber}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.phoneNumber')}</label>
+            <input 
+              type="tel" 
+              .value=${this.phoneNumber} 
+              @input=${(e: Event) => this.onInput(e, 'phoneNumber')} 
+              class=${this.errors.phoneNumber ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.phoneNumber || ''}</div>
+          </div>
 
-          <label>${translate('form.email')}</label>
-          <input 
-            type="email" 
-            .value=${this.email} 
-            @input=${(e: Event) => this.onInput(e, 'email')} 
-            class=${this.errors.email ? 'error' : ''}
-            required 
-          />
-          ${this.errors.email ? html`<div class="error-message">${this.errors.email}</div>` : ''}
+          <div class="form-group">
+            <label>${translate('form.email')}</label>
+            <input 
+              type="email" 
+              .value=${this.email} 
+              @input=${(e: Event) => this.onInput(e, 'email')} 
+              class=${this.errors.email ? 'error' : ''}
+              required 
+            />
+            <div class="error-message">${this.errors.email || ''}</div>
+          </div>
 
-          <label>${translate('form.department')}</label>
-          <select 
-            .value=${this.department} 
-            @change=${(e: Event) => this.onInput(e, 'department')} 
-            required
-          >
-            <option value="Analytics">${translate('department.analytics')}</option>
-            <option value="Tech">${translate('department.tech')}</option>
-          </select>
+          <div class="form-group">
+            <label>${translate('form.department')}</label>
+            <select 
+              .value=${this.department} 
+              @change=${(e: Event) => this.onInput(e, 'department')} 
+              required
+            >
+              <option value="Analytics">${translate('department.analytics')}</option>
+              <option value="Tech">${translate('department.tech')}</option>
+            </select>
+            <div class="error-message"></div>
+          </div>
 
-          <label>${translate('form.position')}</label>
-          <select 
-            .value=${this.position} 
-            @change=${(e: Event) => this.onInput(e, 'position')} 
-            required
-          >
-            <option value="Junior">${translate('position.junior')}</option>
-            <option value="Medior">${translate('position.medior')}</option>
-            <option value="Senior">${translate('position.senior')}</option>
-          </select>
+          <div class="form-group">
+            <label>${translate('form.position')}</label>
+            <select 
+              .value=${this.position} 
+              @change=${(e: Event) => this.onInput(e, 'position')} 
+              required
+            >
+              <option value="Junior">${translate('position.junior')}</option>
+              <option value="Medior">${translate('position.medior')}</option>
+              <option value="Senior">${translate('position.senior')}</option>
+            </select>
+            <div class="error-message"></div>
+          </div>
 
           <div class="form-actions">
             <button class="btn" type="submit">
