@@ -1,13 +1,25 @@
+import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { vitePlugin } from '@remcovaes/web-test-runner-vite-plugin';
 
 export default {
-  plugins: [vitePlugin()],
-  testFramework: {
-    config: {
-      ui: 'bdd',
-      timeout: 5000
-    },
+  files: 'src/**/*.test.ts',
+  plugins: [
+    vitePlugin(),
+    esbuildPlugin({ ts: true })
+  ],
+  coverage: true,
+  coverageConfig: {
+    exclude: [
+      '**/node_modules/**',
+    ],
+    include: ['src/**/*.ts']
   },
-  testsFinishTimeout: 10000,
-  coverage: true
-};
+  nodeResolve: true,
+  testRunnerHtml: testFramework => `
+    <html>
+      <body>
+        <script type="module" src="${testFramework}"></script>
+      </body>
+    </html>
+  `
+}; 
