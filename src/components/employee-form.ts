@@ -4,6 +4,7 @@ import { Employee } from '../store/types';
 import { store, addEmployee, updateEmployee, setEditingEmployee } from '../store/store';
 import { Router } from '@vaadin/router';
 import { translate } from '../i18n/i18n';
+import './app-modal';
 
 @customElement('employee-form')
 export class EmployeeForm extends LitElement {
@@ -17,6 +18,13 @@ export class EmployeeForm extends LitElement {
   @state() private position = 'Junior';
   @state() private errors: { [key: string]: string } = {};
   @state() private isEditMode = false;
+  @state() private modalOpen = false;
+  @state() private modalTitle = '';
+  @state() private modalMessage = '';
+  @state() private modalConfirmText = 'OK';
+  @state() private modalCancelText = '';
+  @state() private modalOnConfirm: (() => void) | null = null;
+  @state() private modalOnCancel: (() => void) | null = null;
 
   private unsubscribe: (() => void) | null = null;
 
@@ -282,13 +290,29 @@ export class EmployeeForm extends LitElement {
     }
   }
 
+  private showModal({ title, message, confirmText = 'OK', cancelText = '', onConfirm = null, onCancel = null }: { title: string, message: string, confirmText?: string, cancelText?: string, onConfirm?: (() => void) | null, onCancel?: (() => void) | null }) {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.modalConfirmText = confirmText;
+    this.modalCancelText = cancelText;
+    this.modalOnConfirm = onConfirm;
+    this.modalOnCancel = onCancel;
+    this.modalOpen = true;
+  }
+
+  private handleModalConfirm = () => {
+    this.modalOpen = false;
+    if (this.modalOnConfirm) this.modalOnConfirm();
+  };
+
+  private handleModalCancel = () => {
+    this.modalOpen = false;
+    if (this.modalOnCancel) this.modalOnCancel();
+  };
+
   private async onSubmit(e: Event) {
     e.preventDefault();
-    
-    if (!this.validateForm()) {
-      return;
-    }
-
+    if (!this.validateForm()) return;
     const employeeData: Employee = {
       id: store.getState().editingEmployee?.id || crypto.randomUUID(),
       firstName: this.firstName,
@@ -300,30 +324,33 @@ export class EmployeeForm extends LitElement {
       department: this.department,
       position: this.position
     };
-
     try {
       if (this.isEditMode) {
-        if (!window.confirm(translate('alert.updateConfirm'))) {
-          return;
-        }
-        updateEmployee(employeeData);
-        await new Promise(resolve => {
-          alert(translate('alert.updateSuccess'));
-          resolve(true);
+        this.showModal({
+          title: 'Are you sure?',
+          message: translate('alert.updateConfirm'),
+          confirmText: 'Proceed',
+          cancelText: 'Cancel',
+          onConfirm: async () => {
+            updateEmployee(employeeData);
+            setEditingEmployee(null);
+            this.resetForm();
+            Router.go('/');
+          }
         });
+        return;
       } else {
         addEmployee(employeeData);
-        await new Promise(resolve => {
-          alert(translate('alert.createSuccess'));
-          resolve(true);
-        });
+        setEditingEmployee(null);
+        this.resetForm();
+        Router.go('/');
       }
-      
-      setEditingEmployee(null);
-      this.resetForm();
-      Router.go('/');
     } catch (error) {
-      alert(translate('alert.error'));
+      this.showModal({
+        title: 'Error',
+        message: translate('alert.error'),
+        confirmText: 'OK',
+      });
       console.error('Error saving employee:', error);
     }
   }
@@ -331,7 +358,9 @@ export class EmployeeForm extends LitElement {
   override render() {
     return html`
       <div class="form-wrapper">
-        <div class="form-title">${this.isEditMode ? translate('form.title.edit') : translate('form.title.add')}</div>
+        <div class="form-title">
+          ${this.isEditMode ? translate('form.title.edit') : translate('form.title.add')}
+        </div>
         <form class="form-container" @submit=${this.onSubmit}>
           <label>${translate('form.firstName')}</label>
           <input 
@@ -415,9 +444,21 @@ export class EmployeeForm extends LitElement {
           </select>
 
           <div class="form-actions">
-            <button class="btn" type="submit">${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}</button>
+            <button class="btn" type="submit">
+              ${this.isEditMode ? translate('form.submit.edit') : translate('form.submit.add')}
+            </button>
           </div>
         </form>
+        <app-modal
+          .open=${this.modalOpen}
+          .title=${this.modalTitle}
+          .message=${this.modalMessage}
+          .confirmText=${this.modalConfirmText}
+          .cancelText=${this.modalCancelText}
+          @confirm=${this.handleModalConfirm}
+          @cancel=${this.handleModalCancel}
+          @close=${this.handleModalCancel}
+        ></app-modal>
       </div>
     `;
   }
