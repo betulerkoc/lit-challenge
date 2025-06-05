@@ -1,21 +1,33 @@
 import { LitElement, html, css } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 import { Router } from '@vaadin/router';
 import { translate } from '../i18n/i18n';
 import './language-switcher';
 
 @customElement('nav-menu')
 export class NavMenu extends LitElement {
+  @state()
+  private currentPath = location.pathname;
+
   override connectedCallback() {
     super.connectedCallback();
     window.addEventListener('lang-changed', this._onLangChanged);
+    window.addEventListener('vaadin-router-location-changed', this._onRouteChanged);
   }
+
   override disconnectedCallback() {
     super.disconnectedCallback();
     window.removeEventListener('lang-changed', this._onLangChanged);
+    window.removeEventListener('vaadin-router-location-changed', this._onRouteChanged);
   }
+
   private _onLangChanged = () => {
     this.requestUpdate();
+  };
+
+  private _onRouteChanged = (e: Event) => {
+    const customEvent = e as CustomEvent;
+    this.currentPath = customEvent.detail.location.pathname;
   };
 
   static override styles = css`
@@ -37,6 +49,7 @@ export class NavMenu extends LitElement {
       position: fixed;
       top: 0;
       left: 0;
+      z-index: 1000;
     }
     .logo-text {
       color: var(--black);
@@ -51,7 +64,7 @@ export class NavMenu extends LitElement {
       white-space: nowrap;
     }
     .nav-link {
-      color: var(--primary-color);
+      color: var(--primary-color-light);
       font-size: 1rem;
       font-weight: 600;
       background: none;
@@ -71,13 +84,25 @@ export class NavMenu extends LitElement {
     .nav-link svg {
       width: 1.125rem;
       height: 1.125rem;
-      fill: var(--primary-color);
+      fill: var(--primary-color-light);
       margin-bottom: 1px;
     }
+    .nav-link.active svg {
+      fill: var(--primary-color);
+    }
+    .nav-link:hover svg {
+      fill: var(--primary-color);
+    }
     .add-link svg {
-      stroke: var(--primary-color);
+      stroke: var(--primary-color-light);
       fill: none;
       margin-bottom: 1px;
+    }
+    .add-link.active svg {
+      stroke: var(--primary-color);
+    }
+    .add-link:hover svg {
+      stroke: var(--primary-color);
     }
     language-switcher {
       margin-left: 1rem;
@@ -103,8 +128,8 @@ export class NavMenu extends LitElement {
   `;
 
   override render() {
-    const isEmployees = location.pathname === '/';
-    const isAdd = location.pathname === '/form';
+    const isEmployees = this.currentPath === '/';
+    const isAdd = this.currentPath === '/form';
     return html`
       <nav>
         <a class="nav-link add-link${isAdd ? ' active' : ''}" href="/"  @click=${(e: Event) => this._handleNavigation(e, '/')}>
@@ -125,7 +150,7 @@ export class NavMenu extends LitElement {
             class="nav-link add-link${isAdd ? ' active' : ''}"
             @click=${(e: Event) => this._handleNavigation(e, '/form')}
           >
-            <svg width="18" height="18" fill="none" stroke="var(--primary-color)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+           +
             ${translate('nav.addNew')}
           </a>
           <language-switcher></language-switcher>

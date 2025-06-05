@@ -172,49 +172,45 @@ export class EmployeeRecords extends LitElement {
     .card-list {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 1rem;
-      margin-top: 0.75rem;
+      gap: 1.25rem;
+      margin-top: 1rem;
     }
     @media (min-width: 30rem) {
       .card-list {
-        grid-template-columns: repeat(auto-fit, minmax(17.5rem, 1fr));
+        grid-template-columns: repeat(2, 1fr);
       }
     }
     @media (min-width: 48rem) {
       .card-list {
-        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 1.5rem;
       }
     }
     .employee-card {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
       background: #fff;
-      border-radius: 0.75rem;
-      box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.08), 0 0.09375rem 0.25rem rgba(0,0,0,0.04);
-      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      padding: 1.5rem;
       border: 1px solid #f0f0f0;
-      transition: box-shadow 0.2s, transform 0.2s;
+      transition: all 0.2s ease;
       position: relative;
+    }
+    .employee-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
     @media (min-width: 48rem) {
       .employee-card {
-        flex-direction: row;
-        align-items: flex-start;
-        gap: 2rem;
-        padding: 1.75rem 2rem;
-        border-radius: 1rem;
+        padding: 1.75rem;
       }
-    }
-    .card-checkbox {
-      margin-right: 0.75rem;
     }
     .card-details {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr;
-      gap: 0.75rem;
+      gap: 1rem;
     }
     @media (min-width: 30rem) {
       .card-details {
@@ -224,27 +220,57 @@ export class EmployeeRecords extends LitElement {
     @media (min-width: 48rem) {
       .card-details {
         grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
+        gap: 1.25rem;
       }
     }
     .card-field {
       min-width: 0;
-      color: #222;
-      font-size: 0.875rem;
+      color: #333;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
     }
     @media (min-width: 48rem) {
       .card-field {
-        font-size: 0.9375rem;
+        font-size: 1rem;
       }
     }
     .card-label {
       color: var(--primary-color);
-      margin-right: 0.25rem;
+      font-size: 0.8125rem;
     }
     .card-actions {
       display: flex;
-      gap: 0.5rem;
+      gap: 0.75rem;
       justify-content: flex-end;
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid #f0f0f0;
+    }
+    .action-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--primary-color);
+      font-size: 1rem;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .action-btn:hover {
+      background: rgba(255, 102, 0, 0.1);
+      transform: translateY(-1px);
+    }
+    @media (min-width: 48rem) {
+      .action-btn {
+        font-size: 1.125rem;
+        padding: 0.625rem;
+      }
     }
     .pagination {
       display: flex;
@@ -439,7 +465,7 @@ export class EmployeeRecords extends LitElement {
       <table class="employee-list">
         <thead>
           <tr>
-            <th class="checkbox-cell"><input type="checkbox" /></th>
+            <th> </th>
             <th>${translate('form.firstName')}</th>
             <th>${translate('form.lastName')}</th>
             <th>${translate('form.dateOfEmployment')}</th>
@@ -488,23 +514,47 @@ export class EmployeeRecords extends LitElement {
         ${this.paginatedEmployees.map(employee => html`
           <div class="employee-card">
             <div class="card-details">
-              <div class="card-field"><span class="card-label">${translate('form.firstName')}:</span> ${employee.firstName}</div>
-              <div class="card-field"><span class="card-label">${translate('form.lastName')}:</span> ${employee.lastName}</div>
-              <div class="card-field"><span class="card-label">${translate('form.dateOfEmployment')}:</span> ${new Date(employee.dateOfEmployment).toLocaleDateString()}</div>
-              <div class="card-field"><span class="card-label">${translate('form.dateOfBirth')}:</span> ${new Date(employee.dateOfBirth).toLocaleDateString()}</div>
-              <div class="card-field"><span class="card-label">${translate('form.phoneNumber')}:</span> ${employee.phoneNumber}</div>
-              <div class="card-field"><span class="card-label">${translate('form.email')}:</span> ${employee.email}</div>
-              <div class="card-field"><span class="card-label">${translate('form.department')}:</span> ${employee.department}</div>
-              <div class="card-field"><span class="card-label">${translate('form.position')}:</span> ${employee.position}</div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.firstName')}</span>
+                ${employee.firstName}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.lastName')}</span>
+                ${employee.lastName}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.dateOfEmployment')}</span>
+                ${new Date(employee.dateOfEmployment).toLocaleDateString()}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.dateOfBirth')}</span>
+                ${new Date(employee.dateOfBirth).toLocaleDateString()}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.phoneNumber')}</span>
+                ${employee.phoneNumber}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.email')}</span>
+                ${employee.email}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.department')}</span>
+                ${employee.department}
+              </div>
+              <div class="card-field">
+                <span class="card-label">${translate('form.position')}</span>
+                ${employee.position}
+              </div>
             </div>
             <div class="card-actions">
               <button class="action-btn" title="Edit" @click=${() => this.onEditEmployee(employee)}>
-                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" clip-rule="evenodd" d="M21.1213 2.70705C19.9497 1.53548 18.0503 1.53547 16.8787 2.70705L15.1989 4.38685L7.29289 12.2928C7.16473 12.421 7.07382 12.5816 7.02986 12.7574L6.02986 16.7574C5.94466 17.0982 6.04451 17.4587 6.29289 17.707C6.54127 17.9554 6.90176 18.0553 7.24254 17.9701L11.2425 16.9701C11.4184 16.9261 11.5789 16.8352 11.7071 16.707L19.5556 8.85857L21.2929 7.12126C22.4645 5.94969 22.4645 4.05019 21.2929 2.87862L21.1213 2.70705ZM18.2929 4.12126C18.6834 3.73074 19.3166 3.73074 19.7071 4.12126L19.8787 4.29283C20.2692 4.68336 20.2692 5.31653 19.8787 5.70705L18.8622 6.72357L17.3068 5.10738L18.2929 4.12126ZM15.8923 6.52185L17.4477 8.13804L10.4888 15.097L8.37437 15.6256L8.90296 13.5112L15.8923 6.52185ZM4 7.99994C4 7.44766 4.44772 6.99994 5 6.99994H10C10.5523 6.99994 11 6.55223 11 5.99994C11 5.44766 10.5523 4.99994 10 4.99994H5C3.34315 4.99994 2 6.34309 2 7.99994V18.9999C2 20.6568 3.34315 21.9999 5 21.9999H16C17.6569 21.9999 19 20.6568 19 18.9999V13.9999C19 13.4477 18.5523 12.9999 18 12.9999C17.4477 12.9999 17 13.4477 17 13.9999V18.9999C17 19.5522 16.5523 19.9999 16 19.9999H5C4.44772 19.9999 4 19.5522 4 18.9999V7.99994Z" fill="#ff6600"/>
                 </svg>
               </button>
               <button class="action-btn" title="Delete" @click=${() => this.onDeleteEmployee(employee)}>
-                <svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg width="18px" height="18px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M6 19C6 20.1046 6.89543 21 8 21H16C17.1046 21 18 20.1046 18 19V7H6V19ZM19 4H15.5L14.79 3.29C14.6134 3.1134 14.351 3 14.08 3H9.92C9.64903 3 9.3866 3.1134 9.21 3.29L8.5 4H5V6H19V4Z" fill="#ff6600"/>
                 </svg>
               </button>
