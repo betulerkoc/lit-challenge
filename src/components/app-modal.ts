@@ -41,7 +41,7 @@ export class AppModal extends LitElement {
       box-shadow: 0 0.25rem 1rem rgba(0,0,0,0.12);
       min-width: 320px;
       max-width: 90vw;
-      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      padding: 2rem 2rem;
       z-index: 2;
       display: flex;
       flex-direction: column;
@@ -125,7 +125,7 @@ export class AppModal extends LitElement {
       .modal {
         min-width: 0;
         width: 95vw;
-        padding: 1.25rem 0.5rem 1rem 0.5rem;
+        padding: 1.25rem 1rem;
       }
       .modal-title {
         font-size: 1.1rem;

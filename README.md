@@ -2,6 +2,8 @@
 
 A web app built with LitElement to manage employee records.
 
+https://employee-management-challenge.netlify.app/
+
 ## Features
 - List, Add, Edit, and Delete employee records
 - Pagination, search, responsive design
@@ -18,9 +20,9 @@ A web app built with LitElement to manage employee records.
 
 ## ✅ Project Checklist
 
-- [ ] **List all employee records**
+- [X] **List all employee records**
   - [X] Display records in **list** and **table** formats
-  - [ ] Include **pagination** and **search**
+  - [X] Include **pagination** and **search**
   - [X] Support **Edit** and **Delete** actions per record
 
 - [X] **Add a new employee record**

@@ -116,6 +116,10 @@ export const translations: Translations = {
     en: 'Please enter a valid email address',
     tr: 'Lütfen geçerli bir e-posta adresi girin'
   },
+  'validation.email.unique': {
+    en: 'This email address is already registered in the system',
+    tr: 'Bu e-posta adresi sistemde zaten kayıtlı'
+  },
 
   'alert.updateConfirm': {
     en: 'Are you sure you want to update this employee record?',
@@ -163,5 +167,13 @@ export const translations: Translations = {
   'employeeList.actions': {
     en: 'Actions',
     tr: 'İşlemler'
+  },
+  'employeeList.searchPlaceholder': {
+    en: 'Search by name, email, department or position...',
+    tr: 'İsim, e-posta, departman veya pozisyona göre ara...'
+  },
+  'employeeList.noResults': {
+    en: 'No employees found matching your search criteria',
+    tr: 'Arama kriterlerinize uygun çalışan bulunamadı'
   }
 }; 
